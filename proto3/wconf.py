@@ -5,8 +5,7 @@ from threading import Thread
 
 import time
 import sys
-a = 0
-client_socket=[]
+
 def off(callback):
 	board.cleanup()
 	server.close()
@@ -16,10 +15,10 @@ def listen() :
 	global client_socket	
 	data= client_socket.recv(1024)
 	if (len(data)>0) :
-		cible=data.split('&')[0]
+		emetteur=data.split('&')[0]
 		commande=data.split('&')[1]
 		parametre=data.split('&')[-1]
-		return commande,parametre
+		return emetteur,commande,parametre
 	#	print("La cible est :" + str(cible) )
 	#	print("La commande est :" +str(commande))
 	#	print("Le param?tre est :" + str(parametre))
@@ -32,6 +31,9 @@ def configure_server() :
 	print("--- Server is being initalized ---")
 	server.bind((HOST,PORT))
 	print("--- Server has been successfully set up ---")
+
+def wait_for_connection():
+	global server
 	server.listen(4)
 	print("--- Server waiting for connection ---")
 	client_socket, client_addr =server.accept()
@@ -43,5 +45,23 @@ def start_server_daemon():
 	t_create_server.setDaemon(True)
 	t_create_server.start()
 
-	
-	
+def change_status(callbakc):	
+	global status
+	if status="HOST" :
+		status="GUEST"
+	else :
+		status="HOST"
+	wait_status+=5
+
+def init_raspberry(status):
+	global status 
+	board.add_detection_event(38,board.RISING,callback=change_status,bouncetime=1)
+	time.sleep(wait_status)
+	board.remove_detection_event(38)
+
+def ready():
+	global nb_p, p_connected, nb_rpi, rpi_connected
+	if nb_p=p_connected and nb_rpi== rpi_connected :
+		return True
+	else :
+		return False

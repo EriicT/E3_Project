@@ -69,6 +69,15 @@ b_now=0
 b_echant=0
 b_moyenne_echant=0
 b_frequence=0
+
+#Configuration wifi
+status="HOST"
+wait_status=5
+nb_p=0
+nb_rpi=0
+p_connected=0
+rpi_connected=0
+
 board.cleanup()	
 board.setmode(board.BOARD)
 board.setup(MG_BW,board.OUT)
