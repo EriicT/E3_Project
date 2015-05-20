@@ -5,7 +5,7 @@ from moteur import *
 from laser import *
 from read_freq import *
 
-#watchdog_moteur()
+watchdog_moteur()
 #configure_server()
 start_server_daemon()
 enable_moteur(True)

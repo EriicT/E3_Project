@@ -74,17 +74,16 @@ def moteur(commande):
 	
 def watchdog_moteur():
 	m_now = datetime.datetime.now().microsecond
-
+	print("Watched")
 	if abs( m_now - m_last ) > 200000 :
 		PWM_MG_FW.start(0)
 		PWM_MG_BW.start(0)
 		PWM_MD_FW.start(0)
 		PWM_MD_BW.start(0)
 	else : 
-		pass
-	print("Watchdog")
-	threading.Timer(0.5, watchdog_moteur).start()
-	
+		pass		
+	m_watchdog=threading.Timer(1,watchdog_moteur)
+	m_watchdog.start()
 
 def enable_moteur(value) :
 	if value == True :
@@ -93,3 +92,4 @@ def enable_moteur(value) :
 	else :
 		board.output(MG_EN,board.LOW)
 		board.output(MD_EN,board.LOW)
+

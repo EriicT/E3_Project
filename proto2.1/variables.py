@@ -5,7 +5,6 @@ import datetime
 import threading
 import time
 
-
 #Moteur Gauche
 MG_BW = 3
 MG_FW = 5
@@ -73,6 +72,8 @@ b_now=0
 b_echant=0
 b_moyenne_echant=0
 b_frequence=0
+
+#Pin assignement et configuration
 board.cleanup()	
 board.setmode(board.BOARD)
 board.setup(MG_BW,board.OUT)
@@ -112,10 +113,13 @@ PWM_MD_FW=board.PWM(MD_FW,500)
 m_now=0
 m_last=0
 
+from moteur import watchdog_moteur
+
 def off(callback) :
 	board.cleanup()
-	sys.exit("Bye")	
 	server.close()
+	m_watchdog.cancel()
+	sys.exit("Bye")	
 
 #board.add_event_detect(IN_START,board.RISING,callback=off,bouncetime=300)
 
