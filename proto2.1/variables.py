@@ -38,7 +38,7 @@ HOST=''
 PORT=40450
 server=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,1)
-ready_to_listen = False
+ready_to_listen =False
 
 #Laser Frequencies
 set=dict()
@@ -113,14 +113,14 @@ PWM_MD_FW=board.PWM(MD_FW,500)
 m_now=0
 m_last=0
 
-from moteur import watchdog_moteur
+#from moteur import watchdog_moteur
 
 def off(callback) :
 	board.cleanup()
 	server.close()
-	m_watchdog.cancel()
+#	m_watchdog.cancel()
 	sys.exit("Bye")	
 
-#board.add_event_detect(IN_START,board.RISING,callback=off,bouncetime=300)
+board.add_event_detect(IN_START,board.RISING,callback=off,bouncetime=300)
 
 

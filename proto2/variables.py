@@ -111,6 +111,6 @@ def off(callback) :
 	sys.exit("Bye")	
 	server.close()
 
-#board.add_event_detect(IN_START,board.RISING,callback=off,bouncetime=300)
+board.add_event_detect(IN_START,board.RISING,callback=off,bouncetime=300)
 
 

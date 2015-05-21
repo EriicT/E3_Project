@@ -31,13 +31,12 @@ def configure_server() :
 	print("--- Server is being initalized ---")
 	server.bind((HOST,PORT))
 	print("--- Server has been successfully set up ---")
-	while 1 :
-		server.listen(4)
-		print("--- Server waiting for connection ---")
-		client_socket, client_addr =server.accept()
-		print(str(client_addr)+ " has connected to Rpi " )	
-		ready_to_listen=True
-
+	server.listen(4)
+	print("--- Server waiting for connection ---")
+	client_socket, client_addr =server.accept()
+	ready_to_listen=True
+	print(str(client_addr)+ " has connected to Rpi " )	
+	return 0
 def start_server_daemon():
 	print("Starting daemon")
 	t_create_server = Thread(target=configure_server)
