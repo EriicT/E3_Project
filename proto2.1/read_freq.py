@@ -1,16 +1,17 @@
+
 from variables import *
-count=0
+
 def count_left(callback):
-		global count,l_first,l_last,l_delta,l_duree_echant,l_now,l_echant,l_moyenne_echant,l_frequence
+		global l_first,l_last,l_delta,l_duree_echant,l_now,l_echant,l_moyenne_echant,l_frequence
 		l_now = datetime.datetime.now().microsecond
 		l_delta=l_now-l_last
 		l_echant+=1
 		l_duree_echant+=l_delta 
 		l_moyenne_echant=abs(l_duree_echant/l_echant)
 		if 1750<l_moyenne_echant<1900 and l_echant>40 :
-			print("touche gauche"+str(count))
+			l_frequence= round(float(1/(l_moyenne_echant*10E-7)),0)
+			print("touche gauche " + str(l_frequence))
 			l_delta=0
-			count+=1
 			l_echant=0
 			l_duree_echant=0
 			l_last=l_now
@@ -29,7 +30,8 @@ def count_right(callback):
 		r_duree_echant+=r_delta 
 		r_moyenne_echant=abs(r_duree_echant/r_echant)
 		if 1750<r_moyenne_echant<1900 and r_echant>40 :
-			print("touche droit")
+			r_frequence= round(float(1/(r_moyenne_echant*10E-7)),0)
+			print("touche droit " +str(r_frequence))
 			r_delta=0
 			r_echant=0
 			r_duree_echant=0
@@ -48,9 +50,9 @@ def count_back(callback):
 		b_echant+=1
 		b_duree_echant+=b_delta 
 		b_moyenne_echant=abs(b_duree_echant/b_echant)
-		print(b_echant,b_delta, b_moyenne_echant)
 		if 1750<b_moyenne_echant<1900 and b_echant>40 :
-			print("touche")
+			b_frequence= round(float(1/(b_moyenne_echant*10E-7)),0)
+			print("touche arriere " + str(b_frequence))
 			b_delta=0
 			b_echant=0
 			b_duree_echant=0
@@ -62,6 +64,6 @@ def count_back(callback):
 		else :
 			b_last=b_now	
 			
-board.add_event_detect(IN_L,board.RISING,callback=count_left,bouncetime=1)
-board.add_event_detect(IN_R,board.RISING,callback=count_right,bouncetime=1)
-board.add_event_detect(IN_B,board.RISING,callback=count_back,bouncetime=1)
+board.add_event_detect(IN_L,board.RISING,callback=count_left)
+board.add_event_detect(IN_R,board.RISING,callback=count_right)
+board.add_event_detect(IN_B,board.RISING,callback=count_back)

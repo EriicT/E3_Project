@@ -2,6 +2,8 @@ import RPi.GPIO as board
 import sys
 import socket
 import datetime
+import threading
+import time
 
 #Moteur Gauche
 MG_BW = 3
@@ -33,9 +35,15 @@ IN_START = 38
 
 #Configuration host
 HOST=''
-PORT=45500
+PORT=40450
 server=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,1)
+ready_to_listen =False
+
+#Gestion connexions IP
+dict_connected_devices=dict()
+global is_linked
+is_linked = False
 
 #Laser Frequencies
 set=dict()
@@ -70,14 +78,7 @@ b_echant=0
 b_moyenne_echant=0
 b_frequence=0
 
-#Configuration wifi
-status="HOST"
-wait_status=5
-nb_p=0
-nb_rpi=0
-p_connected=0
-rpi_connected=0
-
+#Pin assignement et configuration
 board.cleanup()	
 board.setmode(board.BOARD)
 board.setup(MG_BW,board.OUT)
@@ -109,17 +110,22 @@ board.output(OUT_GUEST,board.LOW)
 board.output(OUT_HOST,board.LOW)
 board.output(OUT_ON,board.HIGH)
 
+#Configuration Moteur
 PWM_MG_BW=board.PWM(MG_BW,500)
 PWM_MG_FW=board.PWM(MG_FW,500)
 PWM_MD_BW=board.PWM(MD_BW,500)
 PWM_MD_FW=board.PWM(MD_FW,500)
+m_now=0
+m_last=0
 
+#from moteur import watchdog_moteur
 
 def off(callback) :
 	board.cleanup()
-	sys.exit("Bye")	
 	server.close()
+#	m_watchdog.cancel()
+	sys.exit("Bye")	
 
-board.add_event_detect(IN_START,board.RISING,callback=off,bouncetime=300)
+#board.add_event_detect(IN_START,board.RISING,callback=off,bouncetime=300)
 
 
