@@ -50,6 +50,12 @@ set=dict()
 set["GUEST"]=450*1.06
 set["HOST"]=550*1.08
 
+#Timer
+start_timer=0
+end_timer=0
+is_playable=False
+now_timer=0
+
 #Reception
 l_first=True
 l_last=0
