@@ -13,19 +13,22 @@ if configure_server() :
 enable_moteur(True)
 init_laser("GUEST")
 time.sleep(10)
+print_dict()
 print(v.is_linked)
 while v.is_linked==True :	
 	board.output(OUT_RDY,board.HIGH)
-	commande,parametre=listen()
-	if commande !=0:
-		if parametre !=0 :
-			print("La commande est: "+str(commande))
-			print("Le parametre est :"+str(parametre))
-			if commande == "laser" :
-				state(parametre)
-			if commande == "moteur":
-				moteur(parametre)	
-	else :
+	try : 
+		interlocuteur,commande,parametre=listen_all()
+		print("La commande vient de :"+str(interlocuteur))
+		print("La commande est: "+str(commande))
+		print("Le parametre est :"+str(parametre))
+		if commande == "laser" :
+			state(parametre)
+		if commande == "moteur":
+			moteur(parametre)	
+		else :
+			pass
+	except :
 		pass
 
 print("Personne au bout de 10 sec ! ")
