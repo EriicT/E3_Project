@@ -70,4 +70,9 @@ def enable_moteur(value) :
 		board.output(MD_EN,board.HIGH)
 	else :
 		board.output(MG_EN,board.LOW)
+<<<<<<< HEAD
 		board.output(MD_EN,board.LOW)
+=======
+		board.output(MD_EN,board.LOW)
+
+>>>>>>> 138cf84152a1d84c7998f611692ccb4146137473
