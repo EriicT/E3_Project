@@ -126,6 +126,6 @@ def off(callback) :
 #	m_watchdog.cancel()
 	sys.exit("Bye")	
 
-#board.add_event_detect(IN_START,board.RISING,callback=off,bouncetime=300)
+board.add_event_detect(IN_START,board.RISING,callback=off,bouncetime=300)
 
 
