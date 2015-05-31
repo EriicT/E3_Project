@@ -87,8 +87,8 @@ def watchdog_moteur():
 	else : 
 		pass		
 	
-	m_watchdog=threading.Timer(1,watchdog_moteur)
-	m_watchdog.start()
+m_watchdog=threading.Timer(1,watchdog_moteur)
+m_watchdog.start()
 
 def enable_moteur(value) :
 	if value == True :
