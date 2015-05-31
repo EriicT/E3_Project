@@ -1,7 +1,7 @@
-from variables import *
+import variables as v
+
 count=0
 def count_left(callback):
-		global count,l_first,l_last,l_delta,l_duree_echant,l_now,l_echant,l_moyenne_echant,l_frequence
 		l_now = datetime.datetime.now().microsecond
 		l_delta=l_now-l_last
 		l_echant+=1

@@ -1,10 +1,10 @@
-from variables import *
+import variables as v
 
-laser=board.PWM(OUT_LASER,400)
+laser= v.board.PWM(v.OUT_LASER,400)
 
 def init_laser(player):
 	global laser
-	laser = board.PWM(OUT_LASER,set[player])
+	laser = v.board.PWM(v.OUT_LASER,v.set[player])
 	
 
 def state(state):
