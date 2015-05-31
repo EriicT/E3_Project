@@ -59,6 +59,6 @@ def count_back(callback):
 		else :
 			v.b_last=v.b_now	
 			
-board.add_event_detect(IN_L,board.RISING,callback=count_left,bouncetime=1)
-board.add_event_detect(IN_R,board.RISING,callback=count_right,bouncetime=1)
-board.add_event_detect(IN_B,board.RISING,callback=count_back,bouncetime=1)
+v.board.add_event_detect(v.IN_L,v.board.RISING,callback=count_left,bouncetime=1)
+v.board.add_event_detect(v.IN_R,v.board.RISING,callback=count_right,bouncetime=1)
+v.board.add_event_detect(v.IN_B,v.board.RISING,callback=count_back,bouncetime=1)
