@@ -34,7 +34,7 @@ IN_SELECT = 36
 IN_START = 38
 
 #Configuration host
-HOST=''
+HOST=socket.gethostbyname(socket.gethostname())
 PORT=40450
 client_master=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 server=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -44,6 +44,17 @@ game_ready = False
 
 #Gestion connexions IP
 dict_connected_devices=dict()
+dict_connected_devices[socket.gethostbyname(socket.gethostname())] = dict({
+		'self_ip' :socket.gethostbyname(socket.gethostname()),
+		'sock_listen': None,
+		'sock_send':None ,
+		'is_linked':False,
+		'name' : "raspberry1" ,
+		'type' : "raspberry",
+		'role' :"true_slave",
+		'associated_device_ip': "",
+		'feedback':"True",
+		})
 is_linked = False
 
 #Laser Frequencies

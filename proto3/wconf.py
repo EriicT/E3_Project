@@ -38,17 +38,39 @@ def listen_all():
 	except :
 		pass
 
+def associate_devices():
+	for key in v.dict_connected_devices:
+		if v.dict_connected_devices[key]['role'] == 'true_master' and v.dict_connected_devices[second_key]['is_linked'] == False :
+			v.dict_connected_devices[key]['associated_device_ip'] = v.HOST
+			v.dict_connected_devices[v.HOST]['associated_device_ip'] = key
+
+		elif v.dict_connected_devices[key]['role'] == 'master' :
+				for second_key in v.dict_connected_devices:
+					if v.dict_connected_devices[second_key]['role'] == 'slave' and v.dict_connected_devices[second_key]['is_linked'] == False : 
+						v.dict_connected_devices[key]['associated_device_ip'] = second_key
+						v.dict_connected_devices[second_key]['associated_device_ip'] = key
+
+		elif v.dict_connected_devices[key]['role'] == 'slave' :
+				for second_key in v.dict_connected_devices:
+					if v.dict_connected_devices[second_key]['role'] == 'master' and v.dict_connected_devices[second_key]['is_linked'] == False :
+						v.dict_connected_devices[key]['associated_device_ip'] = second_key
+						v.dict_connected_devices[second_key]['associated_device_ip'] = key
+
+
+
 def add_dict(c_socket,c_addr):
 	v.dict_connected_devices[str(c_addr[0])] = dict({
 		'self_ip' :str(c_addr[0]),
 		'sock_listen': c_socket,
 		'sock_send':None ,
+		'is_linked':False,
 		'name' : "" ,
 		'type' : "",
 		'role' :"",
 		'associated_device_ip': "",
 		'feedback':"",
 		})
+	associate_devices()
 	print v.dict_connected_devices
 
 def set_profil(cible,data):
