@@ -36,13 +36,16 @@ IN_START = 38
 #Configuration host
 HOST=''
 PORT=40450
+client_master=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+client_raspberry=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+client_master2=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 server=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,1)
 ready_to_listen =False
+game_ready = False
 
 #Gestion connexions IP
 dict_connected_devices=dict()
-global is_linked
 is_linked = False
 
 #Laser Frequencies
@@ -55,6 +58,8 @@ start_timer=0
 end_timer=0
 is_playable=False
 now_timer=0
+n_player =0
+duration=0
 
 #Reception
 l_first=True
