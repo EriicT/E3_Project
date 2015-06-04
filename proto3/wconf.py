@@ -2,6 +2,7 @@ import variables as v
 from threading import Thread
 
 
+
 def off(callback):
 	v.board.cleanup()
 	v.server.close()
@@ -16,12 +17,21 @@ def listen(socket) :
 		parametre=data.split('&')[-1]
 		return cible,commande,parametre
 
+def link_new_device(c_addr):
+	for key in v.dict_connected_devices :
+		if key != "10.5.5.1":
+			v.dict_connected_devices[c_addr]['sock_send'] = v.socket.socket(v.socket.AF_INET,v.socket.SOCK_STREAM)
+			try :
+				v.dict_connected_devices[c_addr]['sock_send'].connect((c_addr,40450))
+				print("Connexion reussie")
+			except :
+				print("Ca n'a pas marche")
 def listen_all():
 	try :
 		for key in v.dict_connected_devices :
-			v.dict_connected_devices[key]['socket_connected'].setblocking(0)
+			v.dict_connected_devices[key]['sock_listen'].setblocking(0)
 			try :
-				cible,commande,parametre=listen(v.dict_connected_devices[key]['socket_connected'])
+				cible,commande,parametre=listen(v.dict_connected_devices[key]['sock_listen'])
 				return cible,commande,parametre 			
 			except :
 				pass
@@ -31,7 +41,8 @@ def listen_all():
 def add_dict(c_socket,c_addr):
 	v.dict_connected_devices[str(c_addr[0])] = dict({
 		'self_ip' :str(c_addr[0]),
-		'socket_connected': c_socket,
+		'sock_listen': c_socket,
+		'sock_send':None ,
 		'name' : "" ,
 		'type' : "",
 		'role' :"",
@@ -73,7 +84,7 @@ def thread_server():
 		v.is_linked = True
 		print (v.is_linked)	
 		print(str(client_addr)+ " has connected to Rpi " )
-	
+		link_new_device(client_addr[0])	
 	
 def start_server_daemon():
 	print("--- Starting daemon ---")

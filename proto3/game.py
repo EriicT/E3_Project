@@ -27,13 +27,15 @@ def watchdog_timer():
 def set_game(data):
 	v.n_player=int(data.split('*')[0])
 	v.duration=int(data.split('*')[-1])
-	
+	print("Set game, nb player = ", v.n_player) 
+
+
 def start_game():
 	n_feedback =0
 	for key in v.dict_connected_devices :
 		if v.dict_connected_devices[key]['feedback']==str(True) :
 			n_feedback += 1
-	if n_feedback==v.n_player :
+	if n_feedback==(v.n_player) and n_feedback!=0 :
 		init_timer(v.duration)
 		watchdog_timer()
 		return True

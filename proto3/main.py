@@ -4,7 +4,7 @@ from wconf import *
 from moteur import *
 from laser import *
 from read_freq import *
-#from game import *
+from game import *
 
 if configure_server():
 	start_server_daemon()
@@ -24,6 +24,7 @@ while v.is_linked!=v.is_playable :
 			set_profil(interlocuteur,parametre)		
 		elif commande =="setgame":
 			set_game(parametre)
+
 		v.is_playable = start_game()
 		if v.is_playable == True :
 			print("Game Launched")

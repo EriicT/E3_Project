@@ -37,8 +37,6 @@ IN_START = 38
 HOST=''
 PORT=40450
 client_master=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-client_raspberry=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-client_master2=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 server=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,1)
 ready_to_listen =False
