@@ -9,6 +9,15 @@ def off(callback):
 	sys.exit("bye")
 
 
+
+def send(target,fonction,data):
+	global message 
+	message =target +"&" + fonction+ "&"  +data
+	try :
+		v.dict_connected_devices[target]['sock_send'].send(message)	
+	except :
+		print("Fail message")
+
 def listen(socket) :
 	data= socket.recv(1024)
 	if (len(data)>0) :
@@ -17,9 +26,10 @@ def listen(socket) :
 		parametre=data.split('&')[-1]
 		return cible,commande,parametre
 
+
 def link_new_device(c_addr):
 	for key in v.dict_connected_devices :
-		if key != "10.5.5.1":
+		if key != v.HOST :
 			v.dict_connected_devices[c_addr]['sock_send'] = v.socket.socket(v.socket.AF_INET,v.socket.SOCK_STREAM)
 			try :
 				v.dict_connected_devices[c_addr]['sock_send'].connect((c_addr,40450))
@@ -40,23 +50,26 @@ def listen_all():
 
 def associate_devices():
 	for key in v.dict_connected_devices:
-		if v.dict_connected_devices[key]['role'] == 'true_master' and v.dict_connected_devices[second_key]['is_linked'] == False :
+		if v.dict_connected_devices[key]['role'] == "true_master" and v.dict_connected_devices[key]['is_linked'] == False :
 			v.dict_connected_devices[key]['associated_device_ip'] = v.HOST
-			v.dict_connected_devices[v.HOST]['associated_device_ip'] = key
-
-		elif v.dict_connected_devices[key]['role'] == 'master' :
-				for second_key in v.dict_connected_devices:
-					if v.dict_connected_devices[second_key]['role'] == 'slave' and v.dict_connected_devices[second_key]['is_linked'] == False : 
-						v.dict_connected_devices[key]['associated_device_ip'] = second_key
-						v.dict_connected_devices[second_key]['associated_device_ip'] = key
-
-		elif v.dict_connected_devices[key]['role'] == 'slave' :
-				for second_key in v.dict_connected_devices:
-					if v.dict_connected_devices[second_key]['role'] == 'master' and v.dict_connected_devices[second_key]['is_linked'] == False :
-						v.dict_connected_devices[key]['associated_device_ip'] = second_key
-						v.dict_connected_devices[second_key]['associated_device_ip'] = key
-
-
+		        v.dict_connected_devices[v.HOST]['associated_device_ip'] = key
+			v.dict_connected_devices[key]['is_linked'] = True
+			v.dict_connected_devices[v.HOST]['is_linked'] = True
+			send(key,"coucou","lol")
+		elif v.dict_connected_devices[key]['role'] == "master" :
+			for second_key in v.dict_connected_devices:
+				if v.dict_connected_devices[second_key]['role'] == "slave" and v.dict_connected_devices[second_key]['is_linked'] == False : 
+					v.dict_connected_devices[key]['associated_device_ip'] = second_key
+					v.dict_connected_devices[second_key]['associated_device_ip'] = key
+					v.dict_connected_devices[key]['is_linked'] = True
+					v.dict_connected_devices[second_key]['is_linked'] = True
+		elif v.dict_connected_devices[key]['role'] == "slave" :
+			for second_key in v.dict_connected_devices:
+				if v.dict_connected_devices[second_key]['role'] == "master" and v.dict_connected_devices[second_key]['is_linked'] == False :
+					v.dict_connected_devices[key]['associated_device_ip'] = second_key
+					v.dict_connected_devices[second_key]['associated_device_ip'] = key
+					v.dict_connected_devices[key]['is_linked'] = True
+					v.dict_connected_devices[second_key]['is_linked'] = True
 
 def add_dict(c_socket,c_addr):
 	v.dict_connected_devices[str(c_addr[0])] = dict({
@@ -70,7 +83,6 @@ def add_dict(c_socket,c_addr):
 		'associated_device_ip': "",
 		'feedback':"",
 		})
-	associate_devices()
 	print v.dict_connected_devices
 
 def set_profil(cible,data):
@@ -81,6 +93,8 @@ def set_profil(cible,data):
 	while cursor != len_data :
 		v.dict_connected_devices[cible][splited_data[cursor]] =splited_data[cursor+1]
 		cursor+=2
+
+	associate_devices()
 	print(v.dict_connected_devices)
 					
 def connect(c_socket):
@@ -122,3 +136,4 @@ def start_listening_daemon():
 
 def print_dict():	
 	print(v.dict_connected_devices)
+

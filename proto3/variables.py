@@ -34,9 +34,8 @@ IN_SELECT = 36
 IN_START = 38
 
 #Configuration host
-HOST=socket.gethostbyname(socket.gethostname())
+HOST='192.168.0.22'
 PORT=40450
-client_master=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 server=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,1)
 ready_to_listen =False
@@ -44,8 +43,8 @@ game_ready = False
 
 #Gestion connexions IP
 dict_connected_devices=dict()
-dict_connected_devices[socket.gethostbyname(socket.gethostname())] = dict({
-		'self_ip' :socket.gethostbyname(socket.gethostname()),
+dict_connected_devices[HOST] = dict({
+		'self_ip' :HOST,
 		'sock_listen': None,
 		'sock_send':None ,
 		'is_linked':False,

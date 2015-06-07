@@ -13,12 +13,13 @@ init_laser("GUEST")
 while 1 :	
 	board.output(OUT_RDY,board.HIGH)
 	commande,parametre=listen()
+	print("La commande est: "+str(commande))
 	if commande !=0:
 		if parametre !=0 :
-			print("La commande est: "+str(commande))
-			print("Le parametre est :"+str(parametre))
 			if commande == "laser" :
 				state(parametre)
+				print("Le parametre est :"+str(parametre))
+
 			if commande == "moteur":
 				moteur(parametre)	
 	else :

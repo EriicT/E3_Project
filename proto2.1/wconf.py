@@ -37,6 +37,7 @@ def configure_server() :
 	ready_to_listen=True
 	print(str(client_addr)+ " has connected to Rpi " )	
 	return 0
+
 def start_server_daemon():
 	print("Starting daemon")
 	t_create_server = Thread(target=configure_server)
