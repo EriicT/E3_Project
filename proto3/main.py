@@ -1,13 +1,14 @@
 import time
 import variables as v
-from wconf import *
+from com import *
 from moteur import *
 from laser import *
 from read_freq import *
 from game import *
 
-if configure_server():
-	start_server_daemon()
+if configuration():
+	if configure_server():
+		start_server_daemon()
 
 while v.is_linked == False :
 	time.sleep(5)

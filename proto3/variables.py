@@ -34,7 +34,8 @@ IN_SELECT = 36
 IN_START = 38
 
 #Configuration host
-HOST='192.168.0.22'
+configuration="HOST"
+HOST='1'
 PORT=40450
 server=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,1)
@@ -43,7 +44,7 @@ game_ready = False
 
 #Gestion connexions IP
 dict_connected_devices=dict()
-dict_connected_devices[HOST] = dict({
+dict_connected_devices[(HOST,PORT)] = dict({
 		'self_ip' :HOST,
 		'sock_listen': None,
 		'sock_send':None ,
@@ -57,9 +58,20 @@ dict_connected_devices[HOST] = dict({
 is_linked = False
 
 #Laser Frequencies
-set=dict()
-set["GUEST"]=450*1.06
-set["HOST"]=550*1.08
+set_laser=dict()
+set_frequencies=dict()
+set_laser["GUEST"]=dict({
+	'frequency':540*1.08,
+	'echant':39,
+	'max_period':1940,
+	'min_period':1770,
+	})
+set_laser["HOST"]=dict({
+	'frequency':560*1.08,
+	'echant':40,
+	'max_period':1870,
+	'min_period':1710,
+})
 
 #Timer
 start_timer=0
@@ -145,6 +157,6 @@ def off(callback) :
 #	m_watchdog.cancel()
 	sys.exit("Bye")	
 
-board.add_event_detect(IN_START,board.RISING,callback=off,bouncetime=300)
+#board.add_event_detect(IN_START,board.RISING,callback=off,bouncetime=300)
 
 

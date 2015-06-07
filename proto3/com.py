@@ -1,5 +1,6 @@
 import variables as v
 from threading import Thread
+import commands
 
 def print_dict():	
 	for key in v.dict_connected_devices :
@@ -105,6 +106,11 @@ def set_profil(cible,data):
 def configure_server() :
 	v.board.output(v.OUT_GUEST,v.board.HIGH)
 	print("--- Server is being initalized ---")
+	if v.configuration == "HOST" :
+		v.HOST ='10.5.5.1'
+	else :
+		v.HOST= commands.getoutput("hostname -I")
+	print(" MY IP IS " + str( v.HOST) )
 	v.server.bind((v.HOST,v.PORT))
 	print("--- Server has been successfully set up ---")
 	v.time.sleep(0.2)
