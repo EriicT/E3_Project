@@ -76,19 +76,7 @@ def set_profil(cible,data):
 	associate_devices()
 	print_dict()
 
-def process_command(phase,emetteur,commande,data):
-	if phase == "oonfiguration" :
-		pass
-	elif phase == "pre_game" :
-		if v.dict_connected_devices[emetteur][associated_device_ip]==commands.getoutput("hostname -I") and commande == "setgame":
-			set_game(data)
-		elif commande =="setprofil":
-			set_profil(emetteur,data)
-	elif phase == "in_game" :
-		pass
-		pass
-		pass
-	elif phase == "clean_game"
+
 
 def start_game():
 	n_feedback =0
@@ -104,3 +92,16 @@ def start_game():
 	else : 
 		return False
 
+def process_command(phase,emetteur,commande,data):
+	if phase == "oonfiguration" :
+		pass
+	elif phase == "pre_game" :
+		if v.dict_connected_devices[emetteur][associated_device_ip]==commands.getoutput("hostname -I") and commande == "setgame":
+			set_game(data)
+		elif commande =="setprofil":
+			set_profil(emetteur,data)
+	elif phase == "in_game" :
+		pass
+		pass
+		pass
+	elif phase == "clean_game"
