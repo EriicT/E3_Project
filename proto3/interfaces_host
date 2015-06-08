@@ -1,0 +1,16 @@
+auto lo
+auto eth0
+
+#auto wlan0
+#allow-hotplug wlan0
+#iface wlan0 inet static
+#	address 10.5.5.1
+#	netmask 255.255.255.0
+
+auto wlan0
+allow-hotplug wlan0
+iface wlan1 inet dhcp
+	wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+
+
+

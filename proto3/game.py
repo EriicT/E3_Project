@@ -1,7 +1,7 @@
 import variables as v
 from com import *
 from read_freq import *
-from wifi.wconf import *
+from wconf import *
 import commands	
 def init_timer(duration):
 	final_duration=int(60*duration)
@@ -27,7 +27,7 @@ def watchdog_timer():
 
 def set_configuration(config):
 	if config == "HOST" :
-		v.HOST='10.5.5.1'
+		v.HOST=commands.getoutput("hostname -I")
 	else :	
 		v.HOST=commands.getoutput("hostname -I")
 
@@ -60,7 +60,7 @@ def set_game(data):
 
 def configuration():
 	enable_detection("configuration",True)
-	v.time.sleep(13)
+	v.time.sleep(45)
 	set_configuration(v.configuration)
 	return True
 	

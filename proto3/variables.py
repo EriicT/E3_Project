@@ -34,7 +34,7 @@ IN_SELECT = 36
 IN_START = 38
 
 #Configuration host
-configuration="HOST"
+configuration="GUEST"
 HOST='1'
 PORT=40450
 server=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -63,14 +63,14 @@ set_frequencies=dict()
 set_laser["GUEST"]=dict({
 	'frequency':540*1.08,
 	'echant':39,
-	'max_period':1940,
-	'min_period':1770,
+	'max_period':1869,
+	'min_period':1834,
 	})
 set_laser["HOST"]=dict({
 	'frequency':560*1.08,
 	'echant':40,
-	'max_period':1870,
-	'min_period':1710,
+	'max_period':1801,
+	'min_period':1769,
 })
 
 #Timer
