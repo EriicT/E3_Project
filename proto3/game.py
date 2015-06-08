@@ -1,6 +1,6 @@
 import variables as v
 
-from com import *
+import com as c
 from read_freq import *
 from wconf import *
 from moteur import *
@@ -9,8 +9,37 @@ from read_freq import *
 
 import commands
 
+def associate_devices():
+	for key in v.dict_connected_devices:
+		if v.dict_connected_devices[key]['role'] == "true_master" and v.dict_connected_devices[key]['is_linked'] == False :
+			v.dict_connected_devices[key]['associated_device_ip'] = v.HOST
+		    v.dict_connected_devices[v.HOST]['associated_device_ip'] = key
+			v.dict_connected_devices[key]['is_linked'] = True
+			v.dict_connected_devices[v.HOST]['is_linked'] = True
+		
+		elif v.dict_connected_devices[key]['role'] == "master" :
+			for second_key in v.dict_connected_devices:
+				if v.dict_connected_devices[second_key]['role'] == "slave" and v.dict_connected_devices[second_key]['is_linked'] == False : 
+					v.dict_connected_devices[key]['associated_device_ip'] = second_key
+					v.dict_connected_devices[second_key]['associated_device_ip'] = key
+					v.dict_connected_devices[key]['is_linked'] = True
+					v.dict_connected_devices[second_key]['is_linked'] = True
+					c.send(key,"request_feedback","please")
+					c.send(second_key,"request_feedback","please")
+					
+	
+		elif v.dict_connected_devices[key]['role'] == "slave" :
+			for second_key in v.dict_connected_devices:
+				if v.dict_connected_devices[second_key]['role'] == "master" and v.dict_connected_devices[second_key]['is_linked'] == False :
+					v.dict_connected_devices[key]['associated_device_ip'] = second_key
+					v.dict_connected_devices[second_key]['associated_device_ip'] = key
+					v.dict_connected_devices[key]['is_linked'] = True
+					v.dict_connected_devices[second_key]['is_linked'] = True
+					c.send(key,"request_feedback","please")
+					c.send(second_key,"request_feedback","please")
+
 def get_self_ip():
-	return commands.getoutput("hostname -I")
+	return str(commands.getoutput("hostname -I"))
 	
 def init_timer(duration):
 	final_duration=int(60*duration)
@@ -33,9 +62,12 @@ def watchdog_timer():
 		v.threading.Timer(1,watchdog_timer).cancel()
 	else :	
 		v.threading.Timer(1,watchdog_timer).start()	
+def pause():
+	pass
 
 def set_configuration(config):
 	v.HOST = get_self_ip()
+
 
 def enable_detection(phase,state):
 	if phase == "configuration" :
@@ -75,11 +107,11 @@ def set_profil(cible,data):
 	splited_data = str(data).split('*')
 	len_data=len(splited_data)
 	cursor = 0
+	if cible == str('10.5.5.1'):
+		cible = get_self_ip()
 	while cursor != len_data :
 		v.dict_connected_devices[cible][splited_data[cursor]] =splited_data[cursor+1]
 		cursor+=2
-
-	associate_devices()
 	print_dict()
 
 
@@ -98,18 +130,25 @@ def start_game():
 	else : 
 		return False
 
+def start_game_slave():
+	v.current_phase = "in_game"
+
 def process_command_pre_game(emetteur,commande,data):
-	if v.dict_connected_devices[emetteur][associated_device_ip]==commands.getoutput("hostname -I") and commande == "setgame":
+	if v.dict_connected_devices[emetteur][associated_device_ip]==commands.getoutput("hostname -I") and commande == "setgame" and v.configuration=="HOST":
 		set_game(data)
 	elif commande =="setprofil":
 		set_profil(emetteur,data)
+		if v.configuration=="HOST":
+			associate_devices()
 	elif commande == "stop" :	
 		quit_game(emetteur)
+	elif commande == "start_game_slave":
+		start_game_slave()
 	else 
 		pass
 
 def process_command_in_game(emetteur,commande,data):
-	if  v.dict_connected_devices[get_self_ip()]['associated_device_ip] == emetteur :
+	if  v.dict_connected_devices[get_self_ip()]['associated_device_ip'] == emetteur :
 		if commande == "moteur" :
 			moteur(data)	
 		elif commande == "laser":

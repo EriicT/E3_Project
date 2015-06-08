@@ -54,35 +54,6 @@ def listen_all():
 	except :
 		pass
 
-def associate_devices():
-	for key in v.dict_connected_devices:
-		if v.dict_connected_devices[key]['role'] == "true_master" and v.dict_connected_devices[key]['is_linked'] == False :
-			v.dict_connected_devices[key]['associated_device_ip'] = v.HOST
-		    v.dict_connected_devices[v.HOST]['associated_device_ip'] = key
-			v.dict_connected_devices[key]['is_linked'] = True
-			v.dict_connected_devices[v.HOST]['is_linked'] = True
-		
-		elif v.dict_connected_devices[key]['role'] == "master" :
-			for second_key in v.dict_connected_devices:
-				if v.dict_connected_devices[second_key]['role'] == "slave" and v.dict_connected_devices[second_key]['is_linked'] == False : 
-					v.dict_connected_devices[key]['associated_device_ip'] = second_key
-					v.dict_connected_devices[second_key]['associated_device_ip'] = key
-					v.dict_connected_devices[key]['is_linked'] = True
-					v.dict_connected_devices[second_key]['is_linked'] = True
-					send(key,"request_feedback","please")
-					send(second_key,"request_feedback","please")
-					
-	
-		elif v.dict_connected_devices[key]['role'] == "slave" :
-			for second_key in v.dict_connected_devices:
-				if v.dict_connected_devices[second_key]['role'] == "master" and v.dict_connected_devices[second_key]['is_linked'] == False :
-					v.dict_connected_devices[key]['associated_device_ip'] = second_key
-					v.dict_connected_devices[second_key]['associated_device_ip'] = key
-					v.dict_connected_devices[key]['is_linked'] = True
-					v.dict_connected_devices[second_key]['is_linked'] = True
-					send(key,"request_feedback","please")
-					send(second_key,"request_feedback","please")
-
 
 def add_dict(c_socket,c_addr):
 	v.dict_connected_devices[c_addr] = dict({
@@ -96,7 +67,6 @@ def add_dict(c_socket,c_addr):
 		'associated_device_ip': "",
 		'feedback':"",
 		})
-	print_dict()
 
 
 def configure_server() :
@@ -127,11 +97,5 @@ def start_server_daemon():
 	v.t_create_server = Thread(target=thread_server)
 	v.t_create_server.setDaemon(True)
 	v.t_create_server.start()
-
-def start_listening_daemon():
-	print("--- Starting Listening daemon ---")
-	v.t_listening = Thread(target=listen_all)
-	v.t_listening.setDaemon(True)
-	v.t_listening.start()
 
 
