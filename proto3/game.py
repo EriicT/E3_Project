@@ -63,15 +63,30 @@ def configuration():
 	v.time.sleep(13)
 	set_configuration(v.configuration)
 	return True
-	
-def pre_game():
-	pass
 
-def in_game() :
-	pass
+def set_profil(cible,data):
+	global splited_data
+	splited_data = str(data).split('*')
+	len_data=len(splited_data)
+	cursor = 0
+	while cursor != len_data :
+		v.dict_connected_devices[cible][splited_data[cursor]] =splited_data[cursor+1]
+		cursor+=2
 
-def clean_game():
-	pass
+	associate_devices()
+	print_dict()
+
+def process_command(phase,emetteur,commande,data):
+	if phase == "oonfiguration" :
+		pass
+	elif phase == "pre_game" :
+		if v.dict_connected_devices[emetteur][associated_device_ip]==commands.getoutput("hostname -I") and commande == "setgame":
+			set_game(data)
+		elif commande =="setprofil":
+			set_profil(emetteur,data)
+	elif phase == "in_game" :
+		pass
+	elif phase == "clean_game"
 
 def start_game():
 	n_feedback =0
@@ -81,6 +96,7 @@ def start_game():
 	if n_feedback==(v.n_player) and n_feedback!=0 :
 		init_timer(v.duration)
 		watchdog_timer()
+		v.current_phase = "in_game"
 		return True
 
 	else : 

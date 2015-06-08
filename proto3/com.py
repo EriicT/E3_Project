@@ -17,7 +17,7 @@ def off(callback):
 
 def send(target,fonction,data):
 	global message 
-	message =target +"&" + fonction+ "&"  +data
+	message = target +"&" + fonction+ "&"  +data
 	try :
 		v.dict_connected_devices[target]['sock_send'].send(message)	
 	except :
@@ -41,6 +41,7 @@ def link_new_device(c_addr):
 				print("Connexion reussie")
 			except :
 				print("Ca n'a pas marche")
+
 def listen_all():
 	try :
 		for key in v.dict_connected_devices :
@@ -57,7 +58,7 @@ def associate_devices():
 	for key in v.dict_connected_devices:
 		if v.dict_connected_devices[key]['role'] == "true_master" and v.dict_connected_devices[key]['is_linked'] == False :
 			v.dict_connected_devices[key]['associated_device_ip'] = v.HOST
-		        v.dict_connected_devices[v.HOST]['associated_device_ip'] = key
+		    v.dict_connected_devices[v.HOST]['associated_device_ip'] = key
 			v.dict_connected_devices[key]['is_linked'] = True
 			v.dict_connected_devices[v.HOST]['is_linked'] = True
 			send(key,"coucou","lol")
@@ -90,19 +91,7 @@ def add_dict(c_socket,c_addr):
 		})
 	print_dict()
 
-def set_profil(cible,data):
-	global splited_data
-	splited_data = str(data).split('*')
-	len_data=len(splited_data)
-	cursor = 0
-	while cursor != len_data :
-		v.dict_connected_devices[cible][splited_data[cursor]] =splited_data[cursor+1]
-		cursor+=2
 
-	associate_devices()
-	print_dict()
-					
-			
 def configure_server() :
 	v.board.output(v.OUT_GUEST,v.board.HIGH)
 	print("--- Server is being initalized ---")
