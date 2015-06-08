@@ -86,6 +86,8 @@ def process_command(phase,emetteur,commande,data):
 			set_profil(emetteur,data)
 	elif phase == "in_game" :
 		pass
+		pass
+		pass
 	elif phase == "clean_game"
 
 def start_game():
