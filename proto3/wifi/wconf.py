@@ -1,7 +1,7 @@
 
-import variables as v 
-import os
 
+import os
+from .. import variables as v 
 def set_host():
 	os.system("sudo ifdown wlan0")
 	os.system("sudo cp wifi/interfaces_last /etc/network/interfaces")
@@ -30,8 +30,8 @@ def switch(callback):
 	print("configuration " + str(v.configuration))
 	v.time.sleep(0.5)
 	if v.configuration == "HOST" :
-		set_guest()
 		v.configuration = "GUEST"
+		set_guest()
 	else :
-		set_host()
 		v.configuration = "HOST"
+		set_host()

@@ -95,10 +95,6 @@ def add_dict(c_socket,c_addr):
 def configure_server() :
 	v.board.output(v.OUT_GUEST,v.board.HIGH)
 	print("--- Server is being initalized ---")
-	if v.configuration == "HOST" :
-		v.HOST ='10.5.5.1'
-	else :
-		v.HOST= commands.getoutput("hostname -I")
 	print(" MY IP IS " + str( v.HOST) )
 	v.server.bind((v.HOST,v.PORT))
 	print("--- Server has been successfully set up ---")
