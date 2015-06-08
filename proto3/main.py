@@ -1,9 +1,6 @@
 import time
 import variables as v
 from com import *
-from moteur import *
-from laser import *
-from read_freq import *
 from game import *
 
 if configuration():

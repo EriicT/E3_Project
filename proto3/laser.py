@@ -7,8 +7,8 @@ def init_laser(player):
 	laser = v.board.PWM(v.OUT_LASER,v.set[player])
 	
 
-def state(state):
-		if state == "high" :
+def laser(state):
+		if state == "ON" :
 			laser.start(50)
 		else :
 			laser.start(0)

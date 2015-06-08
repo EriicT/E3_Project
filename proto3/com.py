@@ -61,7 +61,7 @@ def associate_devices():
 		    v.dict_connected_devices[v.HOST]['associated_device_ip'] = key
 			v.dict_connected_devices[key]['is_linked'] = True
 			v.dict_connected_devices[v.HOST]['is_linked'] = True
-			send(key,"coucou","lol")
+		
 		elif v.dict_connected_devices[key]['role'] == "master" :
 			for second_key in v.dict_connected_devices:
 				if v.dict_connected_devices[second_key]['role'] == "slave" and v.dict_connected_devices[second_key]['is_linked'] == False : 
@@ -69,6 +69,10 @@ def associate_devices():
 					v.dict_connected_devices[second_key]['associated_device_ip'] = key
 					v.dict_connected_devices[key]['is_linked'] = True
 					v.dict_connected_devices[second_key]['is_linked'] = True
+					send(key,"request_feedback","please")
+					send(second_key,"request_feedback","please")
+					
+	
 		elif v.dict_connected_devices[key]['role'] == "slave" :
 			for second_key in v.dict_connected_devices:
 				if v.dict_connected_devices[second_key]['role'] == "master" and v.dict_connected_devices[second_key]['is_linked'] == False :
@@ -76,6 +80,9 @@ def associate_devices():
 					v.dict_connected_devices[second_key]['associated_device_ip'] = key
 					v.dict_connected_devices[key]['is_linked'] = True
 					v.dict_connected_devices[second_key]['is_linked'] = True
+					send(key,"request_feedback","please")
+					send(second_key,"request_feedback","please")
+
 
 def add_dict(c_socket,c_addr):
 	v.dict_connected_devices[c_addr] = dict({

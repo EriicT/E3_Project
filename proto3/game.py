@@ -1,8 +1,17 @@
 import variables as v
+
 from com import *
 from read_freq import *
 from wconf import *
-import commands	
+from moteur import *
+from laser import *
+from read_freq import *
+
+import commands
+
+def get_self_ip():
+	return commands.getoutput("hostname -I")
+	
 def init_timer(duration):
 	final_duration=int(60*duration)
 	v.start_time = v.datetime.datetime.now()
@@ -26,10 +35,7 @@ def watchdog_timer():
 		v.threading.Timer(1,watchdog_timer).start()	
 
 def set_configuration(config):
-	if config == "HOST" :
-		v.HOST=commands.getoutput("hostname -I")
-	else :	
-		v.HOST=commands.getoutput("hostname -I")
+	v.HOST = get_self_ip()
 
 def enable_detection(phase,state):
 	if phase == "configuration" :
@@ -92,16 +98,24 @@ def start_game():
 	else : 
 		return False
 
-def process_command(phase,emetteur,commande,data):
-	if phase == "oonfiguration" :
+def process_command_pre_game(emetteur,commande,data):
+	if v.dict_connected_devices[emetteur][associated_device_ip]==commands.getoutput("hostname -I") and commande == "setgame":
+		set_game(data)
+	elif commande =="setprofil":
+		set_profil(emetteur,data)
+	elif commande == "stop" :	
+		quit_game(emetteur)
+	else 
 		pass
-	elif phase == "pre_game" :
-		if v.dict_connected_devices[emetteur][associated_device_ip]==commands.getoutput("hostname -I") and commande == "setgame":
-			set_game(data)
-		elif commande =="setprofil":
-			set_profil(emetteur,data)
-	elif phase == "in_game" :
-		pass
-		pass
-		pass
-	elif phase == "clean_game"
+
+def process_command_in_game(emetteur,commande,data):
+	if  v.dict_connected_devices[get_self_ip()]['associated_device_ip] == emetteur :
+		if commande == "moteur" :
+			moteur(data)	
+		elif commande == "laser":
+			laser(data)
+		elif commande == "pause" 
+			pause()
+		else :
+			pass
+
