@@ -6,7 +6,7 @@ import variables as v
 def set_host():
 	os.system("sudo ifdown wlan0")
 	os.system("sudo cp wifi/interfaces_last /etc/network/interfaces")
-	os.system("sudo cp wifi/hostapd_host /etc/default/hostapd")
+	os.system("sudo cp wifi/hostapd_p.conf /etc/default/hostapd")
 	os.system("sudo ifup wlan0")
 	os.system("sudo service isc-dhcp-server start")
 	os.system("sudo service hostapd start")

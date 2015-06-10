@@ -9,11 +9,14 @@ from read_freq import *
 
 import commands
 
+def off() :
+	pass
+
 def associate_devices():
 	for key in v.dict_connected_devices:
 		if v.dict_connected_devices[key]['role'] == "true_master" and v.dict_connected_devices[key]['is_linked'] == False :
 			v.dict_connected_devices[key]['associated_device_ip'] = v.HOST
-		    v.dict_connected_devices[v.HOST]['associated_device_ip'] = key
+			v.dict_connected_devices[v.HOST]['associated_device_ip'] = key
 			v.dict_connected_devices[key]['is_linked'] = True
 			v.dict_connected_devices[v.HOST]['is_linked'] = True
 		
@@ -46,9 +49,7 @@ def init_timer(duration):
 	v.start_time = v.datetime.datetime.now()
 	v.end_timer = v.start_time + v.datetime.timedelta(seconds=final_duration)
 
-def timer_playable(): 
-
-	
+def timer_playable(): 	
 	v.now_timer = v.datetime.datetime.now()
 	if v.end_timer > v.now_timer:
 		return True
@@ -166,7 +167,7 @@ def process_command_pre_game(emetteur,commande,data):
 		set_mate(data)
 	elif commande == "start_game_slave":
 		start_game_slave()
-	else 
+	else :
 		pass
 
 def process_command_in_game(emetteur,commande,data):
@@ -175,7 +176,7 @@ def process_command_in_game(emetteur,commande,data):
 			moteur(data)	
 		elif commande == "laser":
 			laser(data)
-		elif commande == "pause" 
+		elif commande == "pause" :
 			pause()
 		elif v.configuration == "HOST" and commande == "notify_event" :
 			write_database(emetteur,commande,data)

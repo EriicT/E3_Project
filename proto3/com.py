@@ -21,9 +21,9 @@ def notify_event(type_event,data):
 	message_event=str(type_event)+data
 	if v.configuration == "GUEST":
 		c.send("10.5.5.1","notify_event",message_event)
-		c.send(v.dict_connected_devices[])
+		c.send(v.dict_connected_devices[get_self_ip()]['associated_device_ip'],"notify_event",message_event)
 	else :
-
+		print("notify event "+ message_event)
 
 def init_dict():
 	global conf_name,conf_role,conf_type
