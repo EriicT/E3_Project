@@ -24,8 +24,8 @@ def associate_devices():
 					v.dict_connected_devices[second_key]['associated_device_ip'] = key
 					v.dict_connected_devices[key]['is_linked'] = True
 					v.dict_connected_devices[second_key]['is_linked'] = True
-					c.send(key,"request_feedback","please")
-					c.send(second_key,"request_feedback","please")
+					c.send(key,"set_mate","associated_device_ip*"+str(second_key))
+					c.send(second_key,"set_mate","associated_device_ip*"+str(key))
 					
 	
 		elif v.dict_connected_devices[key]['role'] == "slave" :
@@ -35,8 +35,8 @@ def associate_devices():
 					v.dict_connected_devices[second_key]['associated_device_ip'] = key
 					v.dict_connected_devices[key]['is_linked'] = True
 					v.dict_connected_devices[second_key]['is_linked'] = True
-					c.send(key,"request_feedback","please")
-					c.send(second_key,"request_feedback","please")
+					c.send(key,"set_mate","associated_device_ip*"+str(second_key))
+					c.send(second_key,"set_mate","associated_device_ip*"+str(key))
 
 def get_self_ip():
 	return str(commands.getoutput("hostname -I"))
@@ -47,6 +47,8 @@ def init_timer(duration):
 	v.end_timer = v.start_time + v.datetime.timedelta(seconds=final_duration)
 
 def timer_playable(): 
+
+	
 	v.now_timer = v.datetime.datetime.now()
 	if v.end_timer > v.now_timer:
 		return True
@@ -62,12 +64,13 @@ def watchdog_timer():
 		v.threading.Timer(1,watchdog_timer).cancel()
 	else :	
 		v.threading.Timer(1,watchdog_timer).start()	
+
 def pause():
-	pass
+	enable_detection("all",False)
 
 def set_configuration(config):
 	v.HOST = get_self_ip()
-
+	
 
 def enable_detection(phase,state):
 	if phase == "configuration" :
@@ -90,6 +93,17 @@ def enable_detection(phase,state):
 			v.board.remove_event_detect(v.IN_L)
 			v.board.remove_event_detect(v.IN_R)
 			v.board.remove_event_detect(v.IN_B)
+	elif phase =="all":
+			if state == True : 
+				v.board.add_event_detect(v.IN_L, v.board.RISING, callback=count_left)
+				v.board.add_event_detect(v.IN_R, v.board.RISING, callback=count_right)
+				v.board.add_event_detect(v.IN_B, v.board.RISING, callback=count_back)
+				#leds
+			else :
+				v.board.remove_event_detect(v.IN_L)
+				v.board.remove_event_detect(v.IN_R)
+				v.board.remove_event_detect(v.IN_B)
+				#leds
 	
 def set_game(data):
 	v.n_player=int(data.split('*')[0])
@@ -107,21 +121,23 @@ def set_profil(cible,data):
 	splited_data = str(data).split('*')
 	len_data=len(splited_data)
 	cursor = 0
-	if cible == str('10.5.5.1'):
-		cible = get_self_ip()
 	while cursor != len_data :
 		v.dict_connected_devices[cible][splited_data[cursor]] =splited_data[cursor+1]
 		cursor+=2
 	print_dict()
 
-
+def set_mate(data):
+	set_profil(get_self_ip(),data)
+	c.send(get_self_ip(),"setprofil",v.dict_connected_devices[get_self_ip()]['feedback'])
 
 def start_game():
 	n_feedback =0
 	for key in v.dict_connected_devices :
-		if v.dict_connected_devices[key]['feedback']==str(True) :
+		if v.dict_connected_devices[key]['feedback']==str(True) : 
 			n_feedback += 1
 	if n_feedback==(v.n_player) and n_feedback!=0 :
+		for key in v.dict_connected_devices :
+			send(v.dict_connected_devices[key]['sock_send'],"start_game","kikou")
 		init_timer(v.duration)
 		watchdog_timer()
 		v.current_phase = "in_game"
@@ -132,6 +148,8 @@ def start_game():
 
 def start_game_slave():
 	v.current_phase = "in_game"
+	v.is_playable = True
+
 
 def process_command_pre_game(emetteur,commande,data):
 	if v.dict_connected_devices[emetteur][associated_device_ip]==commands.getoutput("hostname -I") and commande == "setgame" and v.configuration=="HOST":
@@ -140,8 +158,12 @@ def process_command_pre_game(emetteur,commande,data):
 		set_profil(emetteur,data)
 		if v.configuration=="HOST":
 			associate_devices()
-	elif commande == "stop" :	
+	elif commande == "stop":	
 		quit_game(emetteur)
+	elif commande=="request_feedback":
+		c.send(get_self_ip(),"setprofil",v.dict_connected_devices[get_self_ip()]['feedback'])
+	elif commande =="setmate" and emetteur =="10.5.5.1":
+		set_mate(data)
 	elif commande == "start_game_slave":
 		start_game_slave()
 	else 
@@ -155,6 +177,8 @@ def process_command_in_game(emetteur,commande,data):
 			laser(data)
 		elif commande == "pause" 
 			pause()
+		elif v.configuration == "HOST" and commande == "notify_event" :
+			write_database(emetteur,commande,data)
 		else :
 			pass
 
