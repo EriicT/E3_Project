@@ -113,6 +113,7 @@ def set_game(data):
 
 def configuration():
 	enable_detection("configuration",True)
+	set_host()
 	v.time.sleep(45)
 	set_configuration(v.configuration)
 	return True

@@ -5,19 +5,19 @@ import variables as v
 
 def set_host():
 	os.system("sudo ifdown wlan0")
-	os.system("sudo cp wifi/interfaces_last /etc/network/interfaces")
-	os.system("sudo cp wifi/hostapd_p.conf /etc/default/hostapd")
+	os.system("sudo cp interfaces_last /etc/network/interfaces")
+	os.system("sudo cp hostapd_p.conf /etc/default/hostapd")
 	os.system("sudo ifup wlan0")
 	os.system("sudo service isc-dhcp-server start")
-	os.system("sudo service hostapd start")
+	os.system("sudo service hostapd restart")
 	v.board.remove_event_detect(v.IN_SELECT)
 
 def set_guest():
 	os.system("sudo service networking stop")
 	os.system("sudo service isc-dhcp-server stop")
 	os.system("sudo ifdown wlan0")
-	os.system("sudo cp wifi/interfaces_guest /etc/network/interfaces")
-	os.system("sudo cp wifi/hostapd_guest /etc/default/hostapd")
+	os.system("sudo cp interfaces_guest /etc/network/interfaces")
+	os.system("sudo cp hostapd_guest /etc/default/hostapd")
 	os.system("sudo ifup wlan0")
 	os.system("ifconfig")
 	#os.system("sudo service networking restart")
