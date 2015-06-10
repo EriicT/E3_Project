@@ -108,7 +108,7 @@ def configure_server() :
 	print(" MY IP IS " + str( v.HOST) )
 	v.server.bind((v.HOST,v.PORT))
 	print("--- Server has been successfully set up ---")
-	v.dict_connected_devices[get_self_ip()]['sock_listen']=server
+	v.dict_connected_devices[get_self_ip()]['sock_listen']=v.server
 	v.time.sleep(0.2)
 	return True
 

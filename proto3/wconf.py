@@ -6,11 +6,11 @@ import variables as v
 def set_host():
 	os.system("sudo ifdown wlan0")
 	os.system("sudo cp interfaces_last /etc/network/interfaces")
-	os.system("sudo cp hostapd_p.conf /etc/default/hostapd")
+	os.system("sudo cp hostapd_last.conf /etc/hostapd/hostapd.conf")
 	os.system("sudo ifup wlan0")
 	os.system("sudo service isc-dhcp-server start")
 	os.system("sudo service hostapd restart")
-	v.board.remove_event_detect(v.IN_SELECT)
+
 
 def set_guest():
 	os.system("sudo service networking stop")
@@ -21,7 +21,7 @@ def set_guest():
 	os.system("sudo ifup wlan0")
 	os.system("ifconfig")
 	#os.system("sudo service networking restart")
-	v.board.remove_event_detect(v.IN_SELECT)
+
 
 def switch(callback):
 	print("configuration " + str(v.configuration))

@@ -22,42 +22,42 @@ def count_left(callback):
 			v.l_last=v.l_now	
 
 def count_right(callback):
-		r_now = datetime.datetime.now().microsecond
-		r_delta=r_now-r_last
-		r_echant+=1
-		r_duree_echant+=r_delta 
-		r_moyenne_echant=abs(r_duree_echant/r_echant)
+		v.r_now =v.datetime.datetime.now().microsecond
+		v.r_delta=v.r_now-v.r_last
+		v.r_echant+=1
+		v.r_duree_echant+=v.r_delta 
+		v.r_moyenne_echant=abs(v.r_duree_echant/v.r_echant)
 		if v.set_laser[v.configuration]['min_period']<v.r_moyenne_echant<v.set_laser[v.configuration]['max_period'] and v.set_laser[v.configuration]['echant'] > v.r_echant:
-			r_frequence= round(float(1/(r_moyenne_echant*10E-7)),0)
+			v.r_frequence= round(float(1/(v.r_moyenne_echant*10E-7)),0)
 			print("touche droit " +str(r_frequence))
-			r_delta=0
-			r_echant=0
-			r_duree_echant=0
-			r_last=r_now
-		elif r_moyenne_echant>1900 or 1750>r_moyenne_echant:
-			r_last=r_now
-			r_echant=0
-			r_duree_echant=0
+			v.r_delta=0
+			v.r_echant=0
+			v.r_duree_echant=0
+			v.r_last=v.r_now
+		elif v.r_moyenne_echant>1900 or 1750>v.r_moyenne_echant:
+			v.r_last=r_now
+			v.r_echant=0
+			v.r_duree_echant=0
 		else :
-			r_last=r_now	
+			v.r_last=v.r_now	
 
 def count_back(callback):
-		b_now = datetime.datetime.now().microsecond
-		b_delta=b_now-b_last
-		b_echant+=1
-		b_duree_echant+=b_delta 
-		b_moyenne_echant=abs(b_duree_echant/b_echant)
+		v.b_now = v.datetime.datetime.now().microsecond
+		v.b_delta=v.b_now-v.b_last
+		v.b_echant+=1
+		v.b_duree_echant+=b_delta 
+		v.b_moyenne_echant=abs(v.b_duree_echant/v.b_echant)
 		if v.set_laser[v.configuration]['min_period']<v.b_moyenne_echant<v.set_laser[v.configuration]['max_period'] and v.set_laser[v.configuration]['echant'] > v.b_echant :
-			b_frequence= round(float(1/(b_moyenne_echant*10E-7)),0)
-			print("touche arriere " + str(b_frequence))
-			b_delta=0
-			b_echant=0
-			b_duree_echant=0
-			b_last=b_now
-		elif b_moyenne_echant>1900 or 1750>b_moyenne_echant:
-			b_last=b_now
-			b_echant=0
-			b_duree_echant=0
+			v.b_frequence= round(float(1/(v.b_moyenne_echant*10E-7)),0)
+			print("touche arriere " + str(v.b_frequence))
+			v.b_delta=0
+			v.b_echant=0
+			v.b_duree_echant=0
+			v.b_last=v.b_now
+		elif v.b_moyenne_echant>1900 or 1750>v.b_moyenne_echant:
+			v.b_last=v.b_now
+			v.b_echant=0
+			v.b_duree_echant=0
 		else :
-			b_last=b_now	
+			v.b_last=v.b_now	
 			

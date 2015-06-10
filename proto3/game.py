@@ -71,7 +71,7 @@ def pause():
 
 def set_configuration(config):
 	v.HOST = get_self_ip()
-	
+	c.init_dict()
 
 def enable_detection(phase,state):
 	if phase == "configuration" :
