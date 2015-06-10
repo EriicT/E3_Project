@@ -13,11 +13,12 @@ while v.is_linked == False :
 
 v.board.output(v.OUT_RDY,v.board.HIGH)
 
+time.sleep(5)
 while v.is_linked!=v.is_playable :	
-		interlocuteur,commande,parametre=listen_all()
-		process_command_pre_game(interlocuteur,commande,parametre)
-		v.is_playable = start_game()
-		
+	interlocuteur,commande,parametre=listen_all()
+	process_command_pre_game(interlocuteur,commande,parametre)
+	v.is_playable = start_game()
+	
 while v.is_playable :
 		interlocuteur,commande,parametre=listen_all()
 		process_command_pre_game(interlocuteur,commande,parametre)

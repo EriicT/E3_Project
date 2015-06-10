@@ -67,21 +67,22 @@ def listen(socket) :
 
 def link_new_device(c_addr):
 	for key in v.dict_connected_devices :
-		if key != (v.HOST,v.PORT) and v.dict_connected_devices[c_addr]['sock_send'] == None :
-			v.dict_connected_devices[c_addr]['sock_send'] = v.socket.socket(v.socket.AF_INET,v.socket.SOCK_STREAM)
+		if key != v.HOST and v.dict_connected_devices[c_addr[0]]['sock_send'] == None :
+			v.dict_connected_devices[c_addr[0]]['sock_send'] = v.socket.socket(v.socket.AF_INET,v.socket.SOCK_STREAM)
 			try :
-				v.dict_connected_devices[c_addr]['sock_send'].connect((c_addr[0],40450))
-				v.dict_connected_devices[c_addr]['is_linked'] = True
+				v.dict_connected_devices[c_addr[0]]['sock_send'].connect((c_addr[0],40450))
+				v.dict_connected_devices[c_addr[0]]['is_linked'] = True
 			except :
 				print("Ca n'a pas marche")
 
 def listen_all():
-	try :
-		for key in v.dict_connected_devices :
-			v.dict_connected_devices[key]['sock_listen'].setblocking(0)
+	try:
+		for key in v.dict_connected_devices:
 			try :
-				cible,commande,parametre=listen(v.dict_connected_devices[key]['sock_listen'])
-				return cible,commande,parametre 			
+				if key != '10.5.5.1' :
+					v.dict_connected_devices[key]['sock_listen'].setblocking(0)
+					cible,commande,parametre=listen(v.dict_connected_devices[key]['sock_listen'])
+					return cible,commande,parametre 			
 			except :
 				pass
 	except :
@@ -100,7 +101,7 @@ def add_dict(c_socket,c_addr):
 		'associated_device_ip': "",
 		'feedback':"",
 		})
-
+	print(v.dict_connected_devices)
 
 def configure_server() :
 	v.board.output(v.OUT_GUEST,v.board.HIGH)

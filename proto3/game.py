@@ -114,7 +114,7 @@ def set_game(data):
 def configuration():
 	enable_detection("configuration",True)
 	set_host()
-	v.time.sleep(45)
+	v.time.sleep(10)
 	set_configuration(v.configuration)
 	return True
 
@@ -126,7 +126,7 @@ def set_profil(cible,data):
 	while cursor != len_data :
 		v.dict_connected_devices[cible][splited_data[cursor]] =splited_data[cursor+1]
 		cursor+=2
-	print_dict()
+	c.print_dict()
 
 def set_mate(data):
 	set_profil(get_self_ip(),data)
@@ -154,7 +154,7 @@ def start_game_slave():
 
 
 def process_command_pre_game(emetteur,commande,data):
-	if v.dict_connected_devices[emetteur][associated_device_ip]==commands.getoutput("hostname -I") and commande == "setgame" and v.configuration=="HOST":
+	if v.dict_connected_devices[emetteur]['associated_device_ip']==commands.getoutput("hostname -I") and commande == "setgame" and v.configuration=="HOST":
 		set_game(data)
 	elif commande =="setprofil":
 		set_profil(emetteur,data)

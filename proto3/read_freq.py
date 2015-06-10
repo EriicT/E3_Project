@@ -35,7 +35,7 @@ def count_right(callback):
 			v.r_duree_echant=0
 			v.r_last=v.r_now
 		elif v.r_moyenne_echant>1900 or 1750>v.r_moyenne_echant:
-			v.r_last=r_now
+			v.r_last=v.r_now
 			v.r_echant=0
 			v.r_duree_echant=0
 		else :
