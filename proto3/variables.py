@@ -45,17 +45,6 @@ current_phase ="configuration"
 
 #Gestion connexions IP
 dict_connected_devices=dict()
-dict_connected_devices[(HOST,PORT)] = dict({
-		'self_ip' :HOST,
-		'sock_listen': None,
-		'sock_send':None ,
-		'is_linked':False,
-		'name' : "raspberry1" ,
-		'type' : "raspberry",
-		'role' :"true_slave",
-		'associated_device_ip': "",
-		'feedback':"True",
-		})
 is_linked = False
 
 #Laser Frequencies
