@@ -3,7 +3,7 @@ from threading import Thread
 import commands
 
 def get_self_ip():
-	return str(commands.getoutput("hostname -I"))
+	return str(commands.getoutput("hostname -I"))[:-1]
 
 def print_dict():	
 	for key in v.dict_connected_devices :
@@ -16,6 +16,16 @@ def off(callback):
 	v.server.close()
 	sys.exit("bye")
 
+def send(target,fonction,data):
+	global message 
+	if target != None :
+		message = get_self_ip()+"&" + fonction+ "&"  +data
+		print message
+		try :
+			v.dict_connected_devices[target]['sock_send'].send(message)	
+		except :
+			print("Fail message")
+
 def notify_event(type_event,data):
 	global message_event
 	message_event=str(type_event)+data
@@ -24,6 +34,7 @@ def notify_event(type_event,data):
 		c.send(v.dict_connected_devices[get_self_ip()]['associated_device_ip'],"notify_event",message_event)
 	else :
 		print("notify event "+ message_event)
+
 
 def init_dict():
 	global conf_name,conf_role,conf_type
@@ -34,11 +45,28 @@ def init_dict():
 	else :
 		conf_name="slave"
 		conf_role="slave_slave"
+		v.dict_connected_devices["10.5.5.1"] =dict({
+			'self_ip' : "10.5.5.1",
+			'sock_listen' :"",
+			'sock_send' : v.socket.socket(v.socket.AF_INET,v.socket.SOCK_STREAM),			
+			'is_linked':"False",
+			'name' : "Rasberry Master",
+			'type' : "Raspberry",
+			'role' : "slave_master",
+			'associated_device_ip' : "",
+			'feedback' : "",
+			})
+		v.time.sleep(2)
+		try :
+			v.dict_connected_devices["10.5.5.1"]['sock_send'].connect(('10.5.5.1',40450))
+			send("10.5.5.1","setprofil","name*raspberry2*type*raspberry*role*slave_slave")
+		except :
+			print("gros pd")
 
 	v.dict_connected_devices[get_self_ip()] = dict({
 		'self_ip' :get_self_ip(),
 		'sock_listen':"",
-		'sock_send':"" ,
+		'sock_send':"",
 		'is_linked':False,
 		'name' : conf_name,
 		'type' : conf_type,
@@ -48,17 +76,8 @@ def init_dict():
 		})
 
 
-def send(target,fonction,data):
-	global message 
-	if target != None :
-		message = str(target[0]) +"&" + fonction+ "&"  +data
-		try :
-			v.dict_connected_devices[target]['sock_send'].send(message)	
-		except :
-			print("Fail message")
 
 def listen(socket) :
-	socket.setblocking(0)
 	data= socket.recv(1024)
 	if (len(data)>0) :
 		cible=data.split('&')[0]
@@ -69,26 +88,25 @@ def listen(socket) :
 		return False, False, False
 
 def link_new_device(c_addr):
-	for key in v.dict_connected_devices :
-		if key != v.HOST and v.dict_connected_devices[c_addr[0]]['sock_send'] == None :
-			v.dict_connected_devices[c_addr[0]]['sock_send'] = v.socket.socket(v.socket.AF_INET,v.socket.SOCK_STREAM)
-			try :
-				v.dict_connected_devices[c_addr[0]]['sock_send'].connect((c_addr[0],40450))
-				v.dict_connected_devices[c_addr[0]]['is_linked'] = True
-			except :
-				print("Ca n'a pas marche")
+	if v.dict_connected_devices[c_addr[0]]['sock_send'] == "" :
+		v.dict_connected_devices[c_addr[0]]['sock_send'] = v.socket.socket(v.socket.AF_INET,v.socket.SOCK_STREAM)
+		try :
+			v.dict_connected_devices[c_addr[0]]['sock_send'].connect((c_addr[0],40450))
+			v.dict_connected_devices[c_addr[0]]['is_linked'] = True
+		except :
+			print("Ca n'a pas marche")
 
 def listen_all():
-	repr(v.dict_connected_devices)
 	for key in v.dict_connected_devices:
-		if key != get_self_ip() :
-			try :	
+		try :
+			v.dict_connected_devices[key]['sock_listen'].setblocking(0)
+			try :
 				cible,commande,parametre=listen(v.dict_connected_devices[key]['sock_listen'])
 				return cible,commande,parametre
 			except :
-				return False, False, False
-		else : 
-			return False, False, False 			
+				pass
+		except : 
+			pass 			
 
 
 def add_dict(c_socket,c_addr):
@@ -127,7 +145,10 @@ def thread_server():
 		v.is_linked = True
 		print (v.is_linked)	
 		print(str(client_addr)+ " has connected to Rpi " )
-		link_new_device(client_addr)	
+		if v.dict_connected_devices.get(client_addr[0],None) != None:
+			link_new_device(client_addr)
+		else :
+			pass	
 	
 def start_server_daemon():
 	print("--- Starting daemon ---")

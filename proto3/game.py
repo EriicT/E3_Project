@@ -13,7 +13,7 @@ def off() :
 	pass
 
 def get_self_ip():
-	return str(commands.getoutput("hostname -I"))
+	return str(commands.getoutput("hostname -I"))[:-1]
 
 def associate_devices():
 	for key in v.dict_connected_devices:
@@ -119,8 +119,6 @@ def set_game(data):
 
 def configuration():
 	enable_detection("configuration",True)
-	set_host()
-	v.time.sleep(10)
 	set_configuration(v.configuration)
 	return True
 
@@ -160,6 +158,9 @@ def start_game_slave():
 
 
 def process_command_pre_game(emetteur,commande,data):
+	print emetteur
+	print commande
+	print data
 	if v.dict_connected_devices[emetteur]['associated_device_ip']==commands.getoutput("hostname -I") and commande == "setgame" and v.configuration=="HOST":
 		set_game(data)
 	elif commande =="setprofil":
@@ -171,8 +172,9 @@ def process_command_pre_game(emetteur,commande,data):
 		quit_game(emetteur)
 	elif commande=="request_feedback":
 		c.send(get_self_ip(),"setprofil",v.dict_connected_devices[get_self_ip()]['feedback'])
-	elif commande =="setmate" and emetteur =="10.5.5.1":
+	elif commande =="setmate" :
 		set_mate(data)
+		print("set_mate")
 	elif commande == "start_game_slave":
 		start_game_slave()
 	else :

@@ -34,8 +34,8 @@ IN_SELECT = 36
 IN_START = 38
 
 #Configuration host
-configuration="HOST"
-HOST='1'
+configuration="GUEST"
+HOST=''
 PORT=40450
 server=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,1)
@@ -45,7 +45,7 @@ current_phase ="configuration"
 
 #Gestion connexions IP
 dict_connected_devices=dict()
-is_linked = False
+is_linked = True
 
 #Laser Frequencies
 set_laser=dict()
