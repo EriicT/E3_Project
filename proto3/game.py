@@ -25,18 +25,7 @@ def associate_devices():
 
 		elif v.dict_connected_devices[key]['role'] == "master" :
 			for second_key in v.dict_connected_devices:
-				if v.dict_connected_devices[second_key]['role'] == "slave" and v.dict_connected_devices[second_key]['is_linked'] == False : 
-					v.dict_connected_devices[key]['associated_device_ip'] = second_key
-					v.dict_connected_devices[second_key]['associated_device_ip'] = key
-					v.dict_connected_devices[key]['is_linked'] = True
-					v.dict_connected_devices[second_key]['is_linked'] = True
-					c.send(key,"set_mate","associated_device_ip*"+str(second_key))
-					c.send(second_key,"set_mate","associated_device_ip*"+str(key))
-					
-	
-		elif v.dict_connected_devices[key]['role'] == "slave" :
-			for second_key in v.dict_connected_devices:
-				if v.dict_connected_devices[second_key]['role'] == "master" and v.dict_connected_devices[second_key]['is_linked'] == False :
+				if v.dict_connected_devices[second_key]['role'] == "slave_slave" and v.dict_connected_devices[second_key]['is_linked'] == False : 
 					v.dict_connected_devices[key]['associated_device_ip'] = second_key
 					v.dict_connected_devices[second_key]['associated_device_ip'] = key
 					v.dict_connected_devices[key]['is_linked'] = True
@@ -161,7 +150,7 @@ def process_command_pre_game(emetteur,commande,data):
 	print emetteur
 	print commande
 	print data
-	if v.dict_connected_devices[emetteur]['associated_device_ip']==commands.getoutput("hostname -I") and commande == "setgame" and v.configuration=="HOST":
+	if v.dict_connected_devices[emetteur]['associated_device_ip']==get_self_ip() and commande == "setgame" and v.configuration=="HOST":
 		set_game(data)
 	elif commande =="setprofil":
 		set_profil(emetteur,data)

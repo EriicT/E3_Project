@@ -4,6 +4,8 @@ import socket
 import datetime
 import threading
 import time
+import collections
+import select
 
 #Moteur Gauche
 MG_BW = 3
@@ -34,8 +36,13 @@ IN_SELECT = 36
 IN_START = 38
 
 #Configuration host
+<<<<<<< HEAD
 configuration="GUEST"
 HOST=''
+=======
+configuration="HOST"
+HOST='10.5.5.1'
+>>>>>>> c8469e7da23a2bfd0dc4891e9d165760ec443d55
 PORT=40450
 server=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,1)
@@ -62,7 +69,7 @@ set_laser["HOST"]=dict({
 	'max_period':1801,
 	'min_period':1769,
 })
-
+list_con=list()
 #Timer
 start_timer=0
 end_timer=0

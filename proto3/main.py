@@ -13,8 +13,8 @@ while v.is_linked == False :
 
 v.board.output(v.OUT_RDY,v.board.HIGH)
 
-while v.is_linked!=v.is_playable :	
-	try :
+while v.is_linked!=v.is_playable :
+	try :	
 		interlocuteur,commande,parametre=listen_all()
 		if interlocuteur == False :
 			pass
@@ -27,11 +27,13 @@ while v.is_linked!=v.is_playable :
 		pass
 
 while v.is_playable :
+	try :
 		interlocuteur,commande,parametre=listen_all()
 		if interlocuteur == False :
 			pass
 		else :
 			process_command_in_game(interlocuteur,commande,parametre)
-	
+	except :
+		pass	
 print("Fin du game Bitchies! ")
 
