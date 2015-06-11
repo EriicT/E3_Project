@@ -57,38 +57,32 @@ def send(target,fonction,data):
 		except :
 			print("Fail message")
 
-def listen(socket) :
-	socket.setblocking(0)
-	data= socket.recv(1024)
-	if (len(data)>0) :
-		cible=data.split('&')[0]
-		commande=data.split('&')[1]
-		parametre=data.split('&')[-1]	
-		return cible,commande,parametre
-	else :
-		return False, False, False
 
 def link_new_device(c_addr):
-	for key in v.dict_connected_devices :
-		if key != v.HOST and v.dict_connected_devices[c_addr[0]]['sock_send'] == None :
+	v.time.sleep(1)
+	if  v.dict_connected_devices[c_addr[0]]['sock_send'] == None :
+		try :
 			v.dict_connected_devices[c_addr[0]]['sock_send'] = v.socket.socket(v.socket.AF_INET,v.socket.SOCK_STREAM)
-			try :
-				v.dict_connected_devices[c_addr[0]]['sock_send'].connect((c_addr[0],40450))
-				v.dict_connected_devices[c_addr[0]]['is_linked'] = True
-			except :
-				print("Ca n'a pas marche")
+			v.dict_connected_devices[c_addr[0]]['sock_send'].connect((c_addr[0],40450))
+		#	v.dict_connected_devices[c_addr[0]]['is_linked'] = True
+		except :
+			print("Ca n'a pas marche")
 
 def listen_all():
-	repr(v.dict_connected_devices)
-	for key in v.dict_connected_devices:
-		if key != get_self_ip() :
-			try :	
-				cible,commande,parametre=listen(v.dict_connected_devices[key]['sock_listen'])
-				return cible,commande,parametre
-			except :
-				return False, False, False
+	global ready_con
+	ready_con,_,_= v.select.select(v.list_con,[],[])
+	for sock in ready_con:
+		sock.setblocking(0) 
+		data,addr = sock.recvfrom(1024)
+		if len(data)>1 :
+			cible=data.split('&')[0]
+			commande=data.split('&')[1]
+			parametre=data.split('&')[-1]	
+			return cible,commande,parametre
 		else : 
-			return False, False, False 			
+			pass
+		
+		
 
 
 def add_dict(c_socket,c_addr):
@@ -103,6 +97,7 @@ def add_dict(c_socket,c_addr):
 		'associated_device_ip': "",
 		'feedback':"",
 		})
+	v.list_con.append(c_socket)
 	print(v.dict_connected_devices)
 
 def configure_server() :
@@ -111,7 +106,6 @@ def configure_server() :
 	print(" MY IP IS " + str( v.HOST) )
 	v.server.bind((v.HOST,v.PORT))
 	print("--- Server has been successfully set up ---")
-	#v.dict_connected_devices[get_self_ip()]['sock_listen']=v.server
 	v.time.sleep(0.2)
 	return True
 
@@ -127,7 +121,10 @@ def thread_server():
 		v.is_linked = True
 		print (v.is_linked)	
 		print(str(client_addr)+ " has connected to Rpi " )
-		link_new_device(client_addr)	
+		if v.dict_connected_devices.get(client_addr[0],None) != None :
+			link_new_device(client_addr)	
+		else :
+			pass
 	
 def start_server_daemon():
 	print("--- Starting daemon ---")
