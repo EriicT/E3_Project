@@ -37,8 +37,8 @@ def init_dict():
 
 	v.dict_connected_devices[get_self_ip()] = dict({
 		'self_ip' :get_self_ip(),
-		'sock_listen':None,
-		'sock_send':None ,
+		'sock_listen':"",
+		'sock_send':"" ,
 		'is_linked':False,
 		'name' : conf_name,
 		'type' : conf_type,
@@ -50,20 +50,23 @@ def init_dict():
 
 def send(target,fonction,data):
 	global message 
-	message = target +"&" + fonction+ "&"  +data
-	try :
-		v.dict_connected_devices[target]['sock_send'].send(message)	
-	except :
-		print("Fail message")
+	if target != None :
+		message = str(target[0]) +"&" + fonction+ "&"  +data
+		try :
+			v.dict_connected_devices[target]['sock_send'].send(message)	
+		except :
+			print("Fail message")
 
 def listen(socket) :
+	socket.setblocking(0)
 	data= socket.recv(1024)
 	if (len(data)>0) :
 		cible=data.split('&')[0]
 		commande=data.split('&')[1]
-		parametre=data.split('&')[-1]
+		parametre=data.split('&')[-1]	
 		return cible,commande,parametre
-
+	else :
+		return False, False, False
 
 def link_new_device(c_addr):
 	for key in v.dict_connected_devices :
@@ -76,17 +79,16 @@ def link_new_device(c_addr):
 				print("Ca n'a pas marche")
 
 def listen_all():
-	try:
-		for key in v.dict_connected_devices:
-			try :
-				if key != '10.5.5.1' :
-					v.dict_connected_devices[key]['sock_listen'].setblocking(0)
-					cible,commande,parametre=listen(v.dict_connected_devices[key]['sock_listen'])
-					return cible,commande,parametre 			
+	repr(v.dict_connected_devices)
+	for key in v.dict_connected_devices:
+		if key != get_self_ip() :
+			try :	
+				cible,commande,parametre=listen(v.dict_connected_devices[key]['sock_listen'])
+				return cible,commande,parametre
 			except :
-				pass
-	except :
-		pass
+				return False, False, False
+		else : 
+			return False, False, False 			
 
 
 def add_dict(c_socket,c_addr):
@@ -109,7 +111,7 @@ def configure_server() :
 	print(" MY IP IS " + str( v.HOST) )
 	v.server.bind((v.HOST,v.PORT))
 	print("--- Server has been successfully set up ---")
-	v.dict_connected_devices[get_self_ip()]['sock_listen']=v.server
+	#v.dict_connected_devices[get_self_ip()]['sock_listen']=v.server
 	v.time.sleep(0.2)
 	return True
 

@@ -12,14 +12,17 @@ import commands
 def off() :
 	pass
 
+def get_self_ip():
+	return str(commands.getoutput("hostname -I"))
+
 def associate_devices():
 	for key in v.dict_connected_devices:
-		if v.dict_connected_devices[key]['role'] == "true_master" and v.dict_connected_devices[key]['is_linked'] == False :
-			v.dict_connected_devices[key]['associated_device_ip'] = v.HOST
-			v.dict_connected_devices[v.HOST]['associated_device_ip'] = key
+		if v.dict_connected_devices[key]['role'] == "true_master" :
+			v.dict_connected_devices[key]['associated_device_ip'] = get_self_ip()
+			v.dict_connected_devices[get_self_ip()]['associated_device_ip'] = key
 			v.dict_connected_devices[key]['is_linked'] = True
-			v.dict_connected_devices[v.HOST]['is_linked'] = True
-		
+			v.dict_connected_devices[get_self_ip()]['is_linked'] = True
+
 		elif v.dict_connected_devices[key]['role'] == "master" :
 			for second_key in v.dict_connected_devices:
 				if v.dict_connected_devices[second_key]['role'] == "slave" and v.dict_connected_devices[second_key]['is_linked'] == False : 
@@ -40,9 +43,9 @@ def associate_devices():
 					v.dict_connected_devices[second_key]['is_linked'] = True
 					c.send(key,"set_mate","associated_device_ip*"+str(second_key))
 					c.send(second_key,"set_mate","associated_device_ip*"+str(key))
+		else :
+			print("NON")
 
-def get_self_ip():
-	return str(commands.getoutput("hostname -I"))
 	
 def init_timer(duration):
 	final_duration=int(60*duration)
@@ -54,6 +57,9 @@ def timer_playable():
 	if v.end_timer > v.now_timer:
 		return True
 	else :
+		for key in v.dict_connected_devices :
+			c.send(key,"stop","game")
+
 		print("Date de debut: "+str(v.now_timer))
 		print("Date de Fin :"+str(v.end_timer))
 		return False
@@ -139,7 +145,7 @@ def start_game():
 			n_feedback += 1
 	if n_feedback==(v.n_player) and n_feedback!=0 :
 		for key in v.dict_connected_devices :
-			send(v.dict_connected_devices[key]['sock_send'],"start_game","kikou")
+			c.send(v.dict_connected_devices[key]['self_ip'],"start_game","kikou")
 		init_timer(v.duration)
 		watchdog_timer()
 		v.current_phase = "in_game"
@@ -160,6 +166,7 @@ def process_command_pre_game(emetteur,commande,data):
 		set_profil(emetteur,data)
 		if v.configuration=="HOST":
 			associate_devices()
+			c.print_dict()
 	elif commande == "stop":	
 		quit_game(emetteur)
 	elif commande=="request_feedback":
