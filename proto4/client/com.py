@@ -29,39 +29,33 @@ def send(target,fonction,data):
 def notify_event(type_event,data):
 	global message_event
 	message_event=str(type_event)+data
-	if v.configuration == "GUEST":
-		c.send("10.5.5.1","notify_event",message_event)
-		c.send(v.dict_connected_devices[get_self_ip()]['associated_device_ip'],"notify_event",message_event)
-	else :
-		print("notify event "+ message_event)
+	c.send("10.5.5.1","notify_event",message_event)
+	c.send(v.dict_connected_devices[get_self_ip()]['associated_device_ip'],"notify_event",message_event)
 
 
 def init_dict():
 	global conf_name,conf_role,conf_type
 	conf_type="raspberry"
-	if v.configuration == "HOST" :
-		conf_name="master"
-		conf_role="slave_master"
-	else :
-		conf_name="slave"
-		conf_role="slave_slave"
-		v.dict_connected_devices["10.5.5.1"] =dict({
-			'self_ip' : "10.5.5.1",
-			'sock_listen' :"",
-			'sock_send' : v.socket.socket(v.socket.AF_INET,v.socket.SOCK_STREAM),			
-			'is_linked':"False",
-			'name' : "Rasberry Master",
-			'type' : "Raspberry",
-			'role' : "slave_master",
-			'associated_device_ip' : "",
-			'feedback' : "",
-			})
-		v.time.sleep(2)
-		try :
-			v.dict_connected_devices["10.5.5.1"]['sock_send'].connect(('10.5.5.1',40450))
-			send("10.5.5.1","setprofil","name*raspberry2*type*raspberry*role*slave_slave")
-		except :
-			print("gros pd")
+	conf_name="slave"
+	conf_role="slave_slave"
+	v.dict_connected_devices["10.5.5.1"] =dict({
+		'self_ip' : "10.5.5.1",
+		'sock_listen' :"",
+		'sock_send' : v.socket.socket(v.socket.AF_INET,v.socket.SOCK_STREAM),			
+		'is_linked':"False",
+		'name' : "Rasberry Master",
+		'type' : "Raspberry",
+		'role' : "slave_master",
+		'associated_device_ip' : "",
+		'feedback' : "",
+	})
+	try :
+		v.time.sleep(1)
+		v.dict_connected_devices["10.5.5.1"]['sock_send'].connect(('10.5.5.1',40450))
+		send("10.5.5.1","setprofil","name*raspberry2*type*raspberry*role*slave_slave")
+		print("Envoi configuration reussi")
+	except :
+		print("Configuration n'a pas marche")
 
 	v.dict_connected_devices[get_self_ip()] = dict({
 		'self_ip' :get_self_ip(),
@@ -84,9 +78,9 @@ def link_new_device(c_addr):
 		try :
 			v.dict_connected_devices[c_addr[0]]['sock_send'] = v.socket.socket(v.socket.AF_INET,v.socket.SOCK_STREAM)
 			v.dict_connected_devices[c_addr[0]]['sock_send'].connect((c_addr[0],40450))
-		#	v.dict_connected_devices[c_addr[0]]['is_linked'] = True
+		
 		except :
-			print("Ca n'a pas marche")
+			print("Pas reussi a se connecter en retour")
 
 def listen_all():
 	global ready_con
@@ -105,24 +99,30 @@ def listen_all():
 		
 
 def add_dict(c_socket,c_addr):
-	v.dict_connected_devices[str(c_addr[0])] = dict({
-		'self_ip' :str(c_addr[0]),
-		'sock_listen': c_socket,
-		'sock_send':None ,
-		'is_linked':False,
-		'name' : "" ,
-		'type' : "",
-		'role' :"",
-		'associated_device_ip': "",
-		'feedback':"",
-		})
-	v.list_con.append(c_socket)
-	print(v.dict_connected_devices)
+	if str(c_addr[0]) not in v.dict_connected_devices :
+		v.dict_connected_devices[str(c_addr[0])] = dict({
+			'self_ip' :str(c_addr[0]),
+			'sock_listen': c_socket,
+			'sock_send':None ,
+			'is_linked':False,
+			'name' : "" ,
+			'type' : "",
+			'role' :"",
+			'associated_device_ip': "",
+			'feedback':"",
+			})
+		v.list_con.append(c_socket)
+		print(v.dict_connected_devices)
+		link_new_device(c_addr)
+	else : 
+		pass
+
 
 def configure_server() :
 	v.board.output(v.OUT_GUEST,v.board.HIGH)
 	print("--- Server is being initalized ---")
 	print(" MY IP IS " + str( v.HOST) )
+	init_dict()
 	v.server.bind((v.HOST,v.PORT))
 	print("--- Server has been successfully set up ---")
 	v.time.sleep(0.2)
@@ -140,10 +140,6 @@ def thread_server():
 		v.is_linked = True
 		print (v.is_linked)	
 		print(str(client_addr)+ " has connected to Rpi " )
-		if v.dict_connected_devices.get(client_addr[0],None) != None :
-			link_new_device(client_addr)	
-		else :
-			pass
 
 	
 def start_server_daemon():

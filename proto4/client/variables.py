@@ -36,7 +36,8 @@ IN_SELECT = 36
 IN_START = 38
 
 #Configuration host
-configuration="HOST"
+configuration="GUEST"
+SELF=''
 HOST='10.5.5.1'
 PORT=40450
 server=socket.socket(socket.AF_INET,socket.SOCK_STREAM)

@@ -6,8 +6,7 @@ from game import *
 if configuration():
 	if configure_server():
 		start_server_daemon()
-		enable_detection("in_game",True)
-
+		
 while v.is_linked == False :
 	time.sleep(1)
 
