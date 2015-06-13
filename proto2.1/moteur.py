@@ -17,32 +17,39 @@ def moteur(commande):
 		m_last=datetime.datetime.now().microsecond
 	
 		if vitesse_r==0 :
-			PWM_MG_FW.start(0)
-			PWM_MG_BW.start(0)
-			PWM_MD_FW.start(0)
-			PWM_MD_BW.start(0)
-
-		elif -5<angle_r<5 :
-			if vitesse_r> 1:
-				PWM_MG_FW.start(vitesse_c)
-				PWM_MD_FW.start(vitesse_c)
-			else : 
-				PWM_MG_BW.start(vitesse_c)
-				PWM_MD_BW.start(vitesse_c)
+			if angle_r > 50 : 
+				PWM_MG_BW.start(angle_r)
+				PWM_MD_FW.start(angle_r)
+			elif angle_r< -50  :
+				PWM_MG_FW.start(abs(angle_r))
+				PWM_MD_BW.start(abs(angle_r))
+			else :
+				PWM_MG_FW.start(0)
+				PWM_MG_BW.start(0)
+				PWM_MD_FW.start(0)
+				PWM_MD_BW.start(0)
+				
 		elif vitesse_r > 1 :
 			if angle_r > 5 :
 				PWM_MG_FW.start(vitesse_c)
 				PWM_MD_FW.start(vitesse_c*coefficient)
-			else :
+			elif angle_r < -5 :
 				PWM_MG_FW.start(vitesse_c*coefficient)
+				PWM_MD_FW.start(vitesse_c)
+			else :
+				PWM_MG_FW.start(vitesse_c)
 				PWM_MD_FW.start(vitesse_c)
 		elif vitesse_r <-1 :
 			if angle_r >5 :
 				PWM_MG_BW.start(vitesse_c)
 				PWM_MD_BW.start(vitesse_c*coefficient)
-			else :
+			elif angle_r < -5 :
 				PWM_MG_BW.start(vitesse_c*coefficient)
 				PWM_MD_BW.start(vitesse_c)
+			else : 
+				PWM_MG_BW.start(vitesse_c)
+				PWM_MD_BW.start(vitesse_c)
+				
 		else :
 			PWM_MG_FW.start(0)
 			PWM_MG_BW.start(0)
