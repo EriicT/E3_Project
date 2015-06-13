@@ -1,7 +1,7 @@
 import variables as v
 from threading import Thread
 import commands
-import database as d
+#import database as d
 
 def get_self_ip():
 	return str(commands.getoutput("hostname -I"))[:-1]
@@ -30,7 +30,7 @@ def send(target,fonction,data):
 def notify_event(type_event,data):
 	global message_event
 	message_event=str(type_event)+data
-	d.write(message_event)	
+#	d.write(message_event)	
 
 def init_dict():
 	v.dict_connected_devices[get_self_ip()] = dict({
@@ -47,30 +47,31 @@ def init_dict():
 	})
 
 def link_new_device(c_addr):
-	v.time.sleep(1)
-	if  v.dict_connected_devices[c_addr]['sock_send'] == None :
+	if  v.dict_connected_devices[str(c_addr)]['sock_send'] == None :
 		try :
-			v.dict_connected_devices[c_addr]['sock_send'] = v.socket.socket(v.socket.AF_INET,v.socket.SOCK_STREAM)
-			v.dict_connected_devices[c_addr]['sock_send'].connect((c_addr,40450))
+			v.dict_connected_devices[str(c_addr)]['sock_send'] = v.socket.socket(v.socket.AF_INET,v.socket.SOCK_STREAM)
+			v.dict_connected_devices[str(c_addr)]['sock_send'].connect((c_addr,40450))
 		except :
 			print("Ca n'a pas marche")
 
 def listen_all():
 	global ready_con
-	ready_con,_,_= v.select.select(v.list_con,[],[])
+	ready_con,_,_= v.select.select(v.list_con,[],[],0)
 	for sock in ready_con:
-		sock.setblocking(0) 
 		data,addr = sock.recvfrom(1024)
+		print data
 		if len(data)>1 :
 			cible=data.split('&')[0]
 			commande=data.split('&')[1]
 			parametre=data.split('&')[-1]	
 			return cible,commande,parametre
 		else : 
-			pass
+			return False, False, False
+	return False, False, False
 		
 		
 def add_dict(c_socket,c_addr):
+	print(" add dict ")
 	v.dict_connected_devices[str(c_addr[0])] = dict({
 		'self_ip' :str(c_addr[0]),
 		'sock_listen': c_socket,
@@ -84,29 +85,34 @@ def add_dict(c_socket,c_addr):
 		})
 	v.list_con.append(c_socket)
 	print(v.dict_connected_devices)
-	link_new_device(c_addr[0])
+	link_new_device(str(c_addr[0]))
 
 def configure_server() :
 	v.board.output(v.OUT_GUEST,v.board.HIGH)
 	print("--- Server is being initalized ---")
 	print(" MY IP IS " + str( v.HOST) )
 	v.server.bind((v.HOST,v.PORT))
-	
 	print("--- Server has been successfully set up ---")
 	v.time.sleep(0.2)
 	return True
 
 def thread_server():
 	global client_socket, client_addr
-	v.server.listen(6)
-	while 1 : 
+	v.ready_serv,_,_ = v.select.select(v.list_serv, [],[],0) 
+	for serv in v.ready_serv :
 		print("--- Server waiting for connection ---")
-		client_socket, client_addr =v.server.accept()
+		client_socket, client_addr = serv.accept()
 		v.is_linked = True
 		print (v.is_linked)	
 		print(str(client_addr)+ " has connected to Rpi " )
+		add_dict(client_socket,client_addr)
 
+def init_server():
 	
+	v.server.listen(6)
+	v.list_serv.append(v.server)
+	v.ready_serv,_,_= v.select.select(v.list_serv,[],[])
+
 def start_server_daemon():
 	print("--- Starting daemon ---")
 	v.t_create_server = Thread(target=thread_server)
@@ -114,3 +120,5 @@ def start_server_daemon():
 	v.t_create_server.start()
 
 
+def stop_server():
+	v.t_create_server.join()

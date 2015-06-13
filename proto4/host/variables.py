@@ -65,6 +65,8 @@ set_laser["HOST"]=dict({
 	'min_period':1769,
 })
 list_con=list()
+list_serv=list()
+ready_serv=list()
 #Timer
 start_timer=0
 end_timer=0
