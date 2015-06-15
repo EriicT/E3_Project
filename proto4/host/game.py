@@ -103,7 +103,7 @@ def enable_detection(phase,state):
 	
 def set_game(data):
 	v.n_player=int(data.split('*')[0])
-	v.duration=int(data.split('*')[-1])
+	v.duration=int(data.split('*')[-1][0])
 	print("Set game, nb player = ", v.n_player) 
 
 def configuration():
