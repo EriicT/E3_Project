@@ -5,34 +5,29 @@ from game import *
 
 if configuration():
 	if configure_server():
-		start_server_daemon()
-		
-while v.is_linked == False :
-	time.sleep(1)
+		init_server()
 
 v.board.output(v.OUT_RDY,v.board.HIGH)
 
 while v.is_linked!=v.is_playable :
-	try :	
-		interlocuteur,commande,parametre=listen_all()
-		if interlocuteur == False :
-			pass
-		else :
-			process_command_pre_game(interlocuteur,commande,parametre)
-			v.is_playable = start_game()
-			if v.is_playable :
-				break
-	except :
+	thread_server()			
+	interlocuteur,commande,parametre=listen_all()
+	if interlocuteur == False :
 		pass
+	else :
+		process_command_pre_game(interlocuteur,commande,parametre)			
+		v.is_playable = start_game()
+	
+	if v.is_playable :
+			break
+
 
 while v.is_playable :
-	try :
-		interlocuteur,commande,parametre=listen_all()
-		if interlocuteur == False :
-			pass
-		else :
-			process_command_in_game(interlocuteur,commande,parametre)
-	except :
-		pass	
+	interlocuteur,commande,parametre=listen_all()
+	if interlocuteur == False :
+		pass
+	else :
+		process_command_in_game(interlocuteur,commande,parametre)	
+		
 print("Fin du game Bitchies! ")
 

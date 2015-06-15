@@ -52,7 +52,7 @@ def link_new_device(c_addr):
 			v.dict_connected_devices[str(c_addr)]['sock_send'] = v.socket.socket(v.socket.AF_INET,v.socket.SOCK_STREAM)
 			v.dict_connected_devices[str(c_addr)]['sock_send'].connect((c_addr,40450))
 		except :
-			print("Ca n'a pas marche")
+			print("Pas reussi a se connecter en retour")
 
 def listen_all():
 	global ready_con

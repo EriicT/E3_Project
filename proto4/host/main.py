@@ -6,7 +6,6 @@ from game import *
 if configuration():
 	if configure_server():
 		init_server()
-		enable_detection("in_game",True)
 
 v.board.output(v.OUT_RDY,v.board.HIGH)
 
@@ -24,13 +23,11 @@ while v.is_linked!=v.is_playable :
 
 
 while v.is_playable :
-	try :
-		interlocuteur,commande,parametre=listen_all()
-		if interlocuteur == False :
-			pass
-		else :
-			process_command_in_game(interlocuteur,commande,parametre)
-	except :
-		pass	
+	interlocuteur,commande,parametre=listen_all()
+	if interlocuteur == False :			
+		pass
+	else :
+		process_command_in_game(interlocuteur,commande,parametre)
+		
 print("Fin du game Bitchies! ")
 
