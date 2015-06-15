@@ -56,10 +56,8 @@ def link_new_device(c_addr):
 
 def listen_all():
 	global ready_con
-	print("listen")
-	ready_con,_,_= v.select.select(v.list_con,[],[])
+	ready_con,_,_= v.select.select(v.list_con,[],[],0)
 	for sock in ready_con:
-		sock.setblocking(0) 
 		data,addr = sock.recvfrom(1024)
 		print data
 		if len(data)>1 :
@@ -69,6 +67,7 @@ def listen_all():
 			return cible,commande,parametre
 		else : 
 			return False, False, False
+	return False, False, False
 		
 		
 def add_dict(c_socket,c_addr):
@@ -98,9 +97,9 @@ def configure_server() :
 	return True
 
 def thread_server():
-	global client_socket, client_addr 
+	global client_socket, client_addr
+	v.ready_serv,_,_ = v.select.select(v.list_serv, [],[],0) 
 	for serv in v.ready_serv :
-		serv.settimeout(0.001)
 		print("--- Server waiting for connection ---")
 		client_socket, client_addr = serv.accept()
 		v.is_linked = True
