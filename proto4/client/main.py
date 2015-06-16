@@ -16,7 +16,7 @@ while v.is_linked!=v.is_playable :
 		pass
 	else :
 		process_command_pre_game(interlocuteur,commande,parametre)			
-		v.is_playable = start_game()
+		v.is_playable = start_game_slave()
 	
 	if v.is_playable :
 			break
