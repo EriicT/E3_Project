@@ -116,7 +116,7 @@ def process_command_in_game(emetteur,commande,data):
 		elif commande == "pause" :
 			pause()
 	elif emetteur =="10.5.5.1" and commande == "pause":
-		pause()
+		v.is_playable=False
 	else :
 		pass
 	
