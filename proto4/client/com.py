@@ -13,7 +13,7 @@ def print_dict():
 def connect(addr) :
 	v.dict_connected_devices[str(addr)] = dict({
 		'self_ip' : str(addr),
-		'sock_listen' : None,
+		'sock_listen' : None ,
 		'sock_send' : v.socket.socket(v.socket.AF_INET,v.socket.SOCK_STREAM),
 		'is_linked' : False,
 		'name' : "",
