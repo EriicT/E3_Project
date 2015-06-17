@@ -74,19 +74,26 @@ def set_profil(cible,data):
 	len_data=len(splited_data)
 	cursor = 0
 	while cursor != len_data :
-		v.dict_connected_devices[cible][splited_data[cursor]] =splited_data[cursor+1]
+		v.dict_connected_devices[cible][splited_data[cursor]] = splited_data[cursor+1]
 		cursor+=2
 	c.print_dict()
 
 def set_mate(data):
 	set_profil(get_self_ip(),data)
-	c.send(get_self_ip(),"setprofil",v.dict_connected_devices[get_self_ip()]['feedback'])
+	#c.send(get_self_ip(),"setprofil",v.dict_connected_devices[get_self_ip()]['feedback'])
+	c.connect(str(data.split('*')[-1]))
+	v.dict_connected_devices[get_self_ip()]['feedback'] = "True"
+	c.send("10.5.5.1","setprofile","feedback*"+v.dict_connected_devices[get_self_ip()]['feedback'])
+	c.print_dict()
 
 def start_game_slave():
-	v.current_phase = "in_game"
-	enable_detection("configuration",False)
-	enable_detection("in_game",True)
-	v.is_playable = True 
+	if v.start_signal == "True":
+		v.current_phase = "in_game"
+		enable_detection("configuration",False)
+		enable_detection("in_game",True)
+		return True
+	else :
+		return False 
 
 	
 def process_command_pre_game(emetteur,commande,data):
@@ -101,7 +108,7 @@ def process_command_pre_game(emetteur,commande,data):
 		c.send(get_self_ip(),"setprofil",v.dict_connected_devices[get_self_ip()]['feedback'])
 	elif commande =="setmate" :
 		set_mate(data)
-		print("set_mate")
+		print("setmate")
 	elif commande == "start":
 		start_game_slave()
 	else :
