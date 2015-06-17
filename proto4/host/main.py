@@ -10,11 +10,12 @@ if configuration():
 v.board.output(v.OUT_RDY,v.board.HIGH)
 
 while v.is_linked!=v.is_playable :
-	thread_server()			
+	start_server_daemon()			
 	interlocuteur,commande,parametre=listen_all()
 	if interlocuteur == False :
 		pass
 	else :
+	#	print(interlocuteur,commande,parametre)
 		process_command_pre_game(interlocuteur,commande,parametre)			
 		v.is_playable = start_game()
 	

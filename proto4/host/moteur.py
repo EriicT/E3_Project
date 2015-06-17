@@ -12,7 +12,7 @@ def moteur(commande):
 	
 	vitesse_c = round(float((0.5*abs(vitesse_r))+50),2) 
 	coefficient=round(float((90-abs(angle_r))/90),2)
-	v.m_last=datetime.datetime.now().microsecond
+	v.m_last=v.datetime.datetime.now().microsecond
 	
 	if vitesse_r==0 :
 		v.PWM_MG_FW.start(0)

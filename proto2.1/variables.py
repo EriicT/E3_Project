@@ -110,6 +110,9 @@ PWM_MG_BW=board.PWM(MG_BW,500)
 PWM_MG_FW=board.PWM(MG_FW,500)
 PWM_MD_BW=board.PWM(MD_BW,500)
 PWM_MD_FW=board.PWM(MD_FW,500)
+laser=board.PWM(OUT_LASER,500)
+laser.start(50)
+
 m_now=0
 m_last=0
 

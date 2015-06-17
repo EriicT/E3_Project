@@ -67,6 +67,8 @@ set_laser["HOST"]=dict({
 list_con=list()
 list_serv=list()
 ready_serv=list()
+list_send=list()
+ready_send=list()
 #Timer
 start_timer=0
 end_timer=0
