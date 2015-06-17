@@ -141,6 +141,9 @@ PWM_MD_FW=board.PWM(MD_FW,500)
 m_now=0
 m_last=0
 
+#Configuration Laser
+laser = board.PWM(OUT_LASER,1)
+
 #from moteur import watchdog_moteur
 
 def off(callback) :

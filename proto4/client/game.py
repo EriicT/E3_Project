@@ -10,19 +10,16 @@ from read_freq import *
 
 import commands
 
-def off() :
-	pass
 
 def get_self_ip():
 	return str(commands.getoutput("hostname -I"))[:-1]
 
-
-def pause():
+def stop():
 	enable_detection("all",False)
+	v.is_playable = False 
 
 def set_configuration(config):
 	v.HOST = get_self_ip()
-	
 
 def enable_detection(phase,state):
 	if phase == "configuration" :
@@ -35,8 +32,7 @@ def enable_detection(phase,state):
 	
 	elif phase == "pre_game" :
 		if state == True :
-			pass	
-		
+			pass			
 		else : 
 			pass
 
@@ -49,6 +45,7 @@ def enable_detection(phase,state):
 			v.board.remove_event_detect(v.IN_L)
 			v.board.remove_event_detect(v.IN_R)
 			v.board.remove_event_detect(v.IN_B)
+
 	elif phase =="all":
 			if state == True : 
 				v.board.add_event_detect(v.IN_L, v.board.RISING, callback=count_left)
@@ -66,6 +63,7 @@ def enable_detection(phase,state):
 def configuration():
 	enable_detection("configuration",True)
 	set_configuration(v.configuration)
+	init_laser("GUEST")
 	return True
 
 def set_profil(cible,data):
@@ -87,21 +85,20 @@ def set_mate(data):
 	c.print_dict()
 
 def start_game_slave():
-	if v.start_signal == "True":
-		v.current_phase = "in_game"
-		enable_detection("configuration",False)
-		enable_detection("in_game",True)
-		return True
-	else :
-		return False 
+	v.current_phase = "in_game"
+	enable_detection("configuration",False)
+	enable_detection("in_game",True)
+	return True 
 
 	
 def process_command_pre_game(emetteur,commande,data):
 	print emetteur
 	print commande
 	print data
+	print v.dict_connected_devices[get_self_ip()]['associated_device_ip']
 	if commande =="setprofil":
 		set_profil(emetteur,data)
+		c.print_dict()
 	elif commande == "stop":	
 		quit_game(emetteur)
 	elif commande=="request_feedback":
@@ -120,8 +117,8 @@ def process_command_in_game(emetteur,commande,data):
 			moteur(data)	
 		elif commande == "laser":
 			laser(data)
-		elif commande == "pause" :
-			pause()
+		elif commande == "stop" :
+			stop()
 	elif emetteur =="10.5.5.1" and commande == "pause":
 		v.is_playable=False
 	else :

@@ -137,7 +137,7 @@ board.output(OUT_HOST,board.LOW)
 board.output(OUT_ON,board.HIGH)
 
 #Laser 
-laser =board.PWM(OUT_LASER,set_laser["GUEST"]['frequency'])
+laser =board.PWM(OUT_LASER,1)
 
 #Configuration Moteur
 PWM_MG_BW=board.PWM(MG_BW,500)

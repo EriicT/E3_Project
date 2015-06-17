@@ -3,7 +3,7 @@ from variables import *
 from wconf import *
 from moteur import *
 from laser import *
-#from read_freq import *
+from read_freq import *
 
 #watchdog_moteur()
 configure_server()

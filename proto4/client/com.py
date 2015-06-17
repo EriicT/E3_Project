@@ -17,11 +17,12 @@ def connect(addr) :
 		'sock_send' : None,
 		'is_linked' : False,
 		'name' : "",
-		'type' :  "androi",
+		'type' :  "android",
 		'role' : "master",
 		'associated_device_ip' : get_self_ip(),
 		'feedback' :"True",
 		})
+	print("ok")
 
 def off(callback):
 	v.board.cleanup()
@@ -46,10 +47,6 @@ def notify_event(type_event,data):
 
 
 def init_dict():
-	global conf_name,conf_role,conf_type
-	conf_type="raspberry"
-	conf_name="slave"
-	conf_role="slave_slave"
 	v.dict_connected_devices["10.5.5.1"] =dict({
 		'self_ip' : "10.5.5.1",
 		'sock_listen' :"",
@@ -67,6 +64,7 @@ def init_dict():
 		v.dict_connected_devices["10.5.5.1"]['sock_send'].connect(('10.5.5.1',40450))
 		send("10.5.5.1","setprofile","name*raspberry2*type*raspberry*role*slave_slave")
 		print("Envoi configuration reussi")
+
 	except :
 		print("Configuration n'a pas marche")
 
@@ -75,12 +73,13 @@ def init_dict():
 		'sock_listen':"",
 		'sock_send':"",
 		'is_linked':False,
-		'name' : conf_name,
-		'type' : conf_type,
-		'role' : conf_role,
+		'name' : "raspberry2",
+		'type' : "raspberry",
+		'role' : "slave_slave",
 		'associated_device_ip': "",
 		'feedback':"",
 		})
+	print_dict()
 
 
 
@@ -111,9 +110,7 @@ def listen_all():
 	return False, False, False
 		
 def add_dict(c_socket,c_addr):
-	print(" add dict ")
-	print_dict()
-	if str(c_addr[0]) != "10.5.5.1" and v.dict_connected_devices.get[str(c_addr[0])] == None:
+	if str(c_addr[0]) != "10.5.5.1" and v.dict_connected_devices.get(str(c_addr[0])) == None:
 		v.dict_connected_devices[str(c_addr[0])] = dict({
 			'self_ip' :str(c_addr[0]),
 			'sock_listen': c_socket,
@@ -129,7 +126,10 @@ def add_dict(c_socket,c_addr):
 		link_new_device(str(c_addr[0]))
 		v.list_con.append(c_socket)
 	else :
-		v.list_con.remove(v.dict_connected_devices[str(c_addr[0])]['sock_listen'])
+		try :
+			v.list_con.remove(v.dict_connected_devices[str(c_addr[0])]['sock_listen'])
+		except :
+			pass
 		v.list_con.append(c_socket)
 		v.dict_connected_devices[str(c_addr[0])]['sock_listen'] == c_socket	
 

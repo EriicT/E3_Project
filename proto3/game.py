@@ -147,9 +147,6 @@ def start_game_slave():
 
 
 def process_command_pre_game(emetteur,commande,data):
-	print emetteur
-	print commande
-	print data
 	if v.dict_connected_devices[emetteur]['associated_device_ip']==get_self_ip() and commande == "setgame" and v.configuration=="HOST":
 		set_game(data)
 	elif commande =="setprofil":
@@ -170,15 +167,18 @@ def process_command_pre_game(emetteur,commande,data):
 		pass
 
 def process_command_in_game(emetteur,commande,data):
-	if  v.dict_connected_devices[get_self_ip()]['associated_device_ip'] == emetteur :
-		if commande == "moteur" :
-			moteur(data)	
-		elif commande == "laser":
-			laser(data)
-		elif commande == "pause" :
-			pause()
-		elif v.configuration == "HOST" and commande == "notify_event" :
-			write_database(emetteur,commande,data)
-		else :
-			pass
+	#if  v.dict_connected_devices[get_self_ip()]['associated_device_ip'] == emetteur :
+	print commande
+	print data
+	if commande == "moteur" :
+		moteur(data)	
+	elif commande == "laser":
+		print("debut laser")
+		laser(data)
+	elif commande == "pause" :
+		pause()
+	elif v.configuration == "HOST" and commande == "notify_event" :
+		write_database(emetteur,commande,data)
+	else :
+		pass
 
