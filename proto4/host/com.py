@@ -80,7 +80,7 @@ def listen_all():
 		
 def add_dict(c_socket,c_addr):
 	print(" add dict ")
-	if v.dict_connected_devices.get[str(c_addr[0])] == None:
+	if v.dict_connected_devices.get(str(c_addr[0])) == None:
 		v.dict_connected_devices[str(c_addr[0])] = dict({
 			'self_ip' :str(c_addr[0]),
 			'sock_listen': c_socket,
@@ -93,7 +93,8 @@ def add_dict(c_socket,c_addr):
 			'feedback':"",
 			})
 		v.list_con.append(c_socket)
-		print(v.dict_connected_devices)
+		print c_socket
+		print(v.list_con[0])
 		link_new_device(str(c_addr[0]))
 		send(str(c_addr[0]),"hello","you")
 	else :
@@ -108,6 +109,8 @@ def configure_server() :
 	v.server.bind((v.HOST,v.PORT))
 	print("--- Server has been successfully set up ---")
 	v.time.sleep(0.2)
+	print_dict()
+
 	return True
 
 def thread_server():

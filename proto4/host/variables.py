@@ -69,6 +69,7 @@ list_serv=list()
 ready_serv=list()
 list_send=list()
 ready_send=list()
+
 #Timer
 start_timer=0
 end_timer=0
@@ -104,6 +105,15 @@ b_now=0
 b_echant=0
 b_moyenne_echant=0
 b_frequence=0
+
+#Ecriture Base de donnees
+write_column=list()
+write_message=list()
+list_acteur=list()
+write_final=list()
+string_message=""
+csvf = ""
+dict_player=dict()
 
 #Pin assignement et configuration
 board.cleanup()	
@@ -144,6 +154,8 @@ PWM_MD_BW=board.PWM(MD_BW,500)
 PWM_MD_FW=board.PWM(MD_FW,500)
 m_now=0
 m_last=0
+#Configuration Laser
+laser = board.PWM(OUT_LASER,1)
 
 #from moteur import watchdog_moteur
 

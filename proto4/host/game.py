@@ -6,6 +6,7 @@ from wconf import *
 from moteur import *
 from laser import *
 from read_freq import *
+from database import *
 
 import commands
 
@@ -70,6 +71,7 @@ def pause():
 def set_configuration(config):
 	v.HOST = get_self_ip()
 	c.init_dict()
+	create_database()
 
 def enable_detection(phase,state):
 	if phase == "configuration" :
@@ -127,6 +129,14 @@ def set_profil(cible,data):
 		print(cursor)
 		v.dict_connected_devices[str(cible)][splited_data[cursor]] =splited_data[cursor+1]
 		cursor+=2
+
+	if len(v.dict_connected_devices[str(cible)]['name']) >1 and v.dict_player.get(v.dict_connected_devices[str(cible)]['name')==None :
+		v.dict_player[v.dict_connected_devices[str(cible)]['name']]=dict({
+			'has_touch':0,
+			'has_been_touched':0,
+			'score':0;
+		})
+
 	c.print_dict()
 
 def set_mate(data):
