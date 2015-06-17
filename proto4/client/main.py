@@ -1,7 +1,11 @@
 import time
 import variables as v
+from laser import *
 from com import *
 from game import *
+
+init_laser("GUEST")
+state("ON")
 
 if configuration():
 	if configure_server():

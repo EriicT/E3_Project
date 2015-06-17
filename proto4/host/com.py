@@ -80,21 +80,26 @@ def listen_all():
 		
 def add_dict(c_socket,c_addr):
 	print(" add dict ")
-	v.dict_connected_devices[str(c_addr[0])] = dict({
-		'self_ip' :str(c_addr[0]),
-		'sock_listen': c_socket,
-		'sock_send':None ,
-		'is_linked':False,
-		'name' : "" ,
-		'type' : "",
-		'role' :"",
-		'associated_device_ip': "",
-		'feedback':"",
-		})
-	v.list_con.append(c_socket)
-	print(v.dict_connected_devices)
-	link_new_device(str(c_addr[0]))
-	send(str(c_addr[0]),"hello","you")
+	if v.dict_connected_devices.get[str(c_addr[0])] == None:
+		v.dict_connected_devices[str(c_addr[0])] = dict({
+			'self_ip' :str(c_addr[0]),
+			'sock_listen': c_socket,
+			'sock_send':None ,
+			'is_linked':False,
+			'name' : "" ,
+			'type' : "",
+			'role' :"",
+			'associated_device_ip': "",
+			'feedback':"",
+			})
+		v.list_con.append(c_socket)
+		print(v.dict_connected_devices)
+		link_new_device(str(c_addr[0]))
+		send(str(c_addr[0]),"hello","you")
+	else :
+		v.list_con.remove(v.dict_connected_devices[str(c_addr[0])]['sock_listen'])
+		v.list_con.append(c_socket)
+		v.dict_connected_devices[str(c_addr[0])]['sock_listen'] == c_socket	
 
 def configure_server() :
 	v.board.output(v.OUT_GUEST,v.board.HIGH)
@@ -118,6 +123,7 @@ def thread_server():
 			add_dict(client_socket,client_addr)
 	else :
 		return 
+
 def init_server():
 	v.server.listen(6)
 	v.list_serv.append(v.server)

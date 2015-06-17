@@ -14,7 +14,7 @@ def connect(addr) :
 	v.dict_connected_devices[str(addr)] = dict({
 		'self_ip' : str(addr),
 		'sock_listen' : None ,
-		'sock_send' : v.socket.socket(v.socket.AF_INET,v.socket.SOCK_STREAM),
+		'sock_send' : None,
 		'is_linked' : False,
 		'name' : "",
 		'type' :  "androi",
@@ -22,8 +22,6 @@ def connect(addr) :
 		'associated_device_ip' : get_self_ip(),
 		'feedback' :"True",
 		})
-	v.dict_connected_devices[str(addr)]['sock_send'].connect((addr,40450))
-	send(addr,"hello","monpetitmate")
 
 def off(callback):
 	v.board.cleanup()
@@ -115,21 +113,25 @@ def listen_all():
 def add_dict(c_socket,c_addr):
 	print(" add dict ")
 	print_dict()
-	if str(c_addr[0]) != "10.5.5.1" :
+	if str(c_addr[0]) != "10.5.5.1" and v.dict_connected_devices.get[str(c_addr[0])] == None:
 		v.dict_connected_devices[str(c_addr[0])] = dict({
 			'self_ip' :str(c_addr[0]),
 			'sock_listen': c_socket,
 			'sock_send':None ,
 			'is_linked':False,
-			'name' : "" ,
-			'type' : "",
-			'role' :"",
+			'name' : "raspberry1" ,
+			'type' : "raspberry",
+			'role' :"slaver_master",
 			'associated_device_ip': "",
-			'feedback':"",
+			'feedback':"True",
 		})
 		print(v.dict_connected_devices)
 		link_new_device(str(c_addr[0]))
-	v.list_con.append(c_socket)
+		v.list_con.append(c_socket)
+	else :
+		v.list_con.remove(v.dict_connected_devices[str(c_addr[0])]['sock_listen'])
+		v.list_con.append(c_socket)
+		v.dict_connected_devices[str(c_addr[0])]['sock_listen'] == c_socket	
 
 def configure_server() :
 	v.board.output(v.OUT_GUEST,v.board.HIGH)
@@ -142,14 +144,17 @@ def configure_server() :
 
 def thread_server():
 	global client_socket, client_addr
-	v.ready_serv,_,_ = v.select.select(v.list_serv, [],[],0) 
-	for serv in v.ready_serv :
-		print("--- Server waiting for connection ---")
-		client_socket, client_addr = serv.accept()
-		v.is_linked = True
-		print (v.is_linked)	
-		print(str(client_addr)+ " has connected to Rpi " )
-		add_dict(client_socket,client_addr)
+	if len(v.list_serv) > 0 :
+		v.ready_serv,_,_ = v.select.select(v.list_serv, [],[],0) 
+		for serv in v.ready_serv :
+			print("--- Server waiting for connection ---")
+			client_socket, client_addr = serv.accept()
+			v.is_linked = True
+			print (v.is_linked)	
+			print(str(client_addr)+ " has connected to Rpi " )
+			add_dict(client_socket,client_addr)
+	else :
+		return 
 
 def init_server():	
 	v.server.listen(6)

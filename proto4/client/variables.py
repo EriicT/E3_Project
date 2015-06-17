@@ -68,7 +68,7 @@ set_laser["HOST"]=dict({
 	'max_period':1801,
 	'min_period':1769,
 })
-list_con=list()
+laser.PWM(OUT_LASER,set_laser["GUEST"]['frequency'])
 #Timer
 start_timer=0
 end_timer=0
