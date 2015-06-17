@@ -22,6 +22,8 @@ def associate_devices():
 			v.dict_connected_devices[get_self_ip()]['associated_device_ip'] = key
 			v.dict_connected_devices[key]['is_linked'] = True
 			v.dict_connected_devices[get_self_ip()]['is_linked'] = True
+			break
+			c.print_dict()
 
 		elif v.dict_connected_devices[key]['role'] == "master" :
 			for second_key in v.dict_connected_devices:
@@ -30,8 +32,9 @@ def associate_devices():
 					v.dict_connected_devices[second_key]['associated_device_ip'] = key
 					v.dict_connected_devices[key]['is_linked'] = True
 					v.dict_connected_devices[second_key]['is_linked'] = True
-					c.send(key,"set_mate","associated_device_ip*"+str(second_key))
-					c.send(second_key,"set_mate","associated_device_ip*"+str(key))
+					c.send(key,"setmate","associated_device_ip*"+str(second_key))
+					c.send(second_key,"setmate","associated_device_ip*"+str(key))
+			break		
 		else :
 			print("NON")
 
@@ -82,6 +85,7 @@ def enable_detection(phase,state):
 	
 	elif phase == "in_game" :
 		if state == True :
+			init_laser(v.configuration)
 			v.board.add_event_detect(v.IN_L, v.board.RISING, callback=count_left)
 			v.board.add_event_detect(v.IN_R, v.board.RISING, callback=count_right)
 			v.board.add_event_detect(v.IN_B, v.board.RISING, callback=count_back)
@@ -104,7 +108,7 @@ def enable_detection(phase,state):
 def set_game(data):
 	v.n_player=int(data.split('*')[0])
 	v.duration=int(data.split('*')[-1][0])
-	print("Set game, nb player = ", v.n_player) 
+	print("Set game, nb player = ", v.n_player, v.duration) 
 
 def configuration():
 	enable_detection("configuration",True)
@@ -113,11 +117,15 @@ def configuration():
 
 def set_profil(cible,data):
 	global splited_data
+	print("setprofil :" + cible)
+	print("data :" +data)
 	splited_data = str(data).split('*')
 	len_data=len(splited_data)
+	print("len_data :" , len_data)
 	cursor = 0
 	while cursor != len_data :
-		v.dict_connected_devices[cible][splited_data[cursor]] =splited_data[cursor+1]
+		print(cursor)
+		v.dict_connected_devices[str(cible)][splited_data[cursor]] =splited_data[cursor+1]
 		cursor+=2
 	c.print_dict()
 
@@ -128,18 +136,22 @@ def set_mate(data):
 def start_game():
 	n_feedback =0
 	for key in v.dict_connected_devices :
-		if v.dict_connected_devices[key]['feedback']==str(True) : 
+		if v.dict_connected_devices[key]['feedback'].startswith("True") : 
 			n_feedback += 1
-	if n_feedback==(v.n_player) and n_feedback!=0 :
-		for key in v.dict_connected_devices :
-			c.send(v.dict_connected_devices[key]['self_ip'],"start_game","kikou")
-		init_timer(v.duration)
-		watchdog_timer()
-		v.current_phase = "in_game"
-		return True
-
-	else : 
-		return False
+			print(n_feedback)
+			if n_feedback==(int(v.n_player)*2) and n_feedback !=0 :
+				for key in v.dict_connected_devices :
+					c.send(v.dict_connected_devices[key]['self_ip'],"start_game","kikou")
+#		init_timer(v.duration)
+#		watchdog_timer()
+				v.current_phase = "in_game"
+				enable_detection("in_game",True)
+				return True
+			else : 
+				pass
+		else :
+			pass
+	return False
 
 def start_game_slave():
 	v.current_phase = "in_game"
@@ -147,18 +159,15 @@ def start_game_slave():
 
 
 def process_command_pre_game(emetteur,commande,data):
-	print emetteur
-	print commande
-	print data
+
 	if v.dict_connected_devices[emetteur]['associated_device_ip']==get_self_ip() and commande == "setgame" and v.configuration=="HOST":
+		print("setgame")
 		set_game(data)
-	elif commande =="setprofil":
+	elif commande =="setprofile":
 		set_profil(emetteur,data)
 		if v.configuration=="HOST":
 			associate_devices()
 			c.print_dict()
-	elif commande == "stop":	
-		quit_game(emetteur)
 	elif commande=="request_feedback":
 		c.send(get_self_ip(),"setprofil",v.dict_connected_devices[get_self_ip()]['feedback'])
 	elif commande =="setmate" :
@@ -166,17 +175,21 @@ def process_command_pre_game(emetteur,commande,data):
 		print("set_mate")
 	elif commande == "start_game_slave":
 		start_game_slave()
+	elif commande == "stop" :
+		print("ARNAUD APPUIE SUR LE BOUTON")
 	else :
 		pass
 
 def process_command_in_game(emetteur,commande,data):
+	print(emetteur , commande , data)
 	if  v.dict_connected_devices[get_self_ip()]['associated_device_ip'] == emetteur :
 		if commande == "moteur" :
 			moteur(data)	
 		elif commande == "laser":
 			laser(data)
-		elif commande == "pause" :
-			pause()
+		elif commande == "stop" :
+			print("G GAGNER")
+			v.is_playable=False
 		elif v.configuration == "HOST" and commande == "notify_event" :
 			write_database(emetteur,commande,data)
 		else :

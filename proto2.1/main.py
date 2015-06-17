@@ -3,7 +3,7 @@ from variables import *
 from wconf import *
 from moteur import *
 from laser import *
-from read_freq import *
+#from read_freq import *
 
 #watchdog_moteur()
 configure_server()
@@ -14,6 +14,7 @@ while 1 :
 	board.output(OUT_RDY,board.HIGH)
 	commande,parametre=listen()
 	print("La commande est: "+str(commande))
+	print("Le parametre est :" + str(parametre))
 	if commande !=0:
 		if parametre !=0 :
 			if commande == "laser" :

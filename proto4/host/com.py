@@ -18,14 +18,22 @@ def off(callback):
 	sys.exit("bye")
 
 def send(target,fonction,data):
-	global message 
-	if target != None :
-		message = get_self_ip()+"&" + fonction+ "&"  +data
-		print message
-		try :
-			v.dict_connected_devices[target]['sock_send'].send(message)	
-		except :
-			print("Fail message")
+	global message
+	_,v.ready_send,_ = v.select.select([],v.list_send,[],0)
+	message = get_self_ip()+"&" + fonction+ "&"  +data
+	for sock in v.ready_send :
+		print(sock)
+		print(v.dict_connected_devices[target]['sock_send'])
+		if v.dict_connected_devices[target]['sock_send'] == sock :
+			sock.send(message.encode("UTF-8"))
+			print(message + " to " + target)
+			break
+		else :
+			pass
+	#if target != None :
+	#	print (message, "to ", target)
+	#	print_dict()
+	#	v.dict_connected_devices[target]['sock_send'].send(message.encode("UTF-8"))	
 
 def notify_event(type_event,data):
 	global message_event
@@ -42,7 +50,7 @@ def init_dict():
 		'type' : "raspberry",
 		'role' : "slave_master",
 		'associated_device_ip': "",
-		'feedback':"",
+		'feedback':"True",
 		
 	})
 
@@ -50,7 +58,8 @@ def link_new_device(c_addr):
 	if  v.dict_connected_devices[str(c_addr)]['sock_send'] == None :
 		try :
 			v.dict_connected_devices[str(c_addr)]['sock_send'] = v.socket.socket(v.socket.AF_INET,v.socket.SOCK_STREAM)
-			v.dict_connected_devices[str(c_addr)]['sock_send'].connect((c_addr,40450))
+			v.dict_connected_devices[str(c_addr)]['sock_send'].connect((str(c_addr),40450))
+			v.list_send.append(v.dict_connected_devices[str(c_addr)]['sock_send'])			
 		except :
 			print("Pas reussi a se connecter en retour")
 
@@ -59,7 +68,6 @@ def listen_all():
 	ready_con,_,_= v.select.select(v.list_con,[],[],0)
 	for sock in ready_con:
 		data,addr = sock.recvfrom(1024)
-		print data
 		if len(data)>1 :
 			cible=data.split('&')[0]
 			commande=data.split('&')[1]
@@ -86,6 +94,7 @@ def add_dict(c_socket,c_addr):
 	v.list_con.append(c_socket)
 	print(v.dict_connected_devices)
 	link_new_device(str(c_addr[0]))
+	send(str(c_addr[0]),"hello","you")
 
 def configure_server() :
 	v.board.output(v.OUT_GUEST,v.board.HIGH)
@@ -98,23 +107,24 @@ def configure_server() :
 
 def thread_server():
 	global client_socket, client_addr
-	v.ready_serv,_,_ = v.select.select(v.list_serv, [],[],0) 
-	for serv in v.ready_serv :
-		print("--- Server waiting for connection ---")
-		client_socket, client_addr = serv.accept()
-		v.is_linked = True
-		print (v.is_linked)	
-		print(str(client_addr)+ " has connected to Rpi " )
-		add_dict(client_socket,client_addr)
-
+	if len(v.list_serv) > 0 :
+		v.ready_serv,_,_ = v.select.select(v.list_serv, [],[],0) 
+		for serv in v.ready_serv :
+			print("--- Server waiting for connection ---")
+			client_socket, client_addr = serv.accept()
+			v.is_linked = True
+			print (v.is_linked)	
+			print(str(client_addr)+ " has connected to Rpi " )
+			add_dict(client_socket,client_addr)
+	else :
+		return 
 def init_server():
-	
 	v.server.listen(6)
 	v.list_serv.append(v.server)
-	v.ready_serv,_,_= v.select.select(v.list_serv,[],[])
+	v.ready_serv,_,_= v.select.select(v.list_serv,[],[],0)
 
 def start_server_daemon():
-	print("--- Starting daemon ---")
+#	print("--- Starting daemon ---")
 	v.t_create_server = Thread(target=thread_server)
 	v.t_create_server.setDaemon(True)
 	v.t_create_server.start()
