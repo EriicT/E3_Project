@@ -14,6 +14,10 @@ def count_left(callback):
 			v.l_echant=0
 			v.l_duree_echant=0
 			v.l_last=v.l_now
+			v.board.remove_event_detect(v.IN_L)
+			v.time.sleep(2)
+			v.board.add_event_detect(v.IN_L, v.board.RISING,callback=count_left)
+
 		elif v.l_moyenne_echant>1900 or 1750>v.l_moyenne_echant:
 			v.l_last=v.l_now
 			v.l_echant=0

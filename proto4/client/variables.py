@@ -68,7 +68,6 @@ set_laser["HOST"]=dict({
 	'max_period':1801,
 	'min_period':1769,
 })
-laser.PWM(OUT_LASER,set_laser["GUEST"]['frequency'])
 #Timer
 start_timer=0
 end_timer=0
@@ -136,6 +135,9 @@ board.output(OUT_RDY,board.LOW)
 board.output(OUT_GUEST,board.LOW)
 board.output(OUT_HOST,board.LOW)
 board.output(OUT_ON,board.HIGH)
+
+#Laser 
+laser =board.PWM(OUT_LASER,set_laser["GUEST"]['frequency'])
 
 #Configuration Moteur
 PWM_MG_BW=board.PWM(MG_BW,500)

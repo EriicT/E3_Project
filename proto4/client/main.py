@@ -5,8 +5,8 @@ from com import *
 from game import *
 
 init_laser("GUEST")
-state("ON")
-
+laser("ON")
+enable_detection("in_game",True)
 if configuration():
 	if configure_server():
 		init_server()

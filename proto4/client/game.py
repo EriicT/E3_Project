@@ -22,7 +22,7 @@ def pause():
 
 def set_configuration(config):
 	v.HOST = get_self_ip()
-
+	
 
 def enable_detection(phase,state):
 	if phase == "configuration" :
