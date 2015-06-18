@@ -1,0 +1,50 @@
+
+import csv 
+import variables as v
+import datetime
+import os
+
+
+
+def format(player):
+	del v.write_message[:]
+	del v.write_final[:]
+	v.string_message = str(player)+str("-")+str(v.dict_player[player]['has_touch'])+str("-")+str(v.dict_player[player]['has_been_touched'])+str("-")+str(v.dict_player[player]['score'])
+	v.write_message.append(v.string_message)
+	return (v.write_message)
+
+def create_database():
+	global date,database_file,p
+	date = str(datetime.datetime.now().day)+str(".")+str(datetime.datetime.now().hour)+str(".")+str(datetime.datetime.now().minute)
+	database_file =str("db_"+date+str(".csv"))
+	os.system("sudo cp database/example database/"+database_file)
+	v.csvf=database_file
+	return v.csvf
+
+def write_database(data,file):
+	with open(v.csvf, 'a') as p :
+		csv_ecriture = csv.writer(p,delimiter=';',lineterminator='\n')
+		csv_ecriture.writerows(data)
+	p.close()
+
+def score(player1,player2) 
+	v.dict_player[player1]['has_been_touched'	
+
+def read_database():
+	pass
+
+def new_event(player1,player2, event_type,file):
+	if event_type== "touch" :
+		score(player1,player2)
+		v.write_final.append(format(player1))	
+		write_database(v.write_final,file)
+		print v.write_final
+	else : 
+		pass	 
+
+print (create_database())
+file = create_database()
+for i in range (0,5) :
+	new_event("Eric","Kikoo","touched",file)
+
+print v.csvf

@@ -1,0 +1,16 @@
+Eric | 0 | 1 | -1
+Arnaud | 1 | 0 | 2
+Eric | 0 | 2 | -2
+Arnaud | 2 | 0 | 4
+Eric | 0 | 3 | -3
+Arnaud | 3 | 0 | 6
+Eric | 0 | 4 | -4
+Arnaud | 4 | 0 | 8
+Eric | 0 | 5 | -5
+Arnaud | 5 | 0 | 10
+Arnaud | 5 | 1 | 9
+Eric | 1 | 5 | -3
+Arnaud | 5 | 2 | 8
+Eric | 2 | 5 | -1
+Arnaud | 5 | 3 | 7
+Eric | 3 | 5 | 1
