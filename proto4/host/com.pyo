@@ -79,17 +79,14 @@ def listen_all():
 	global ready_con
 	ready_con,_,_= v.select.select(v.list_con,[],[],0)
 	for sock in ready_con:
-		try :
-			data,addr = sock.recvfrom(1024)
-			if len(data)>1 :
-				cible=data.split('&')[0]
-				commande=data.split('&')[1]
-				parametre=data.split('&')[-1]	
-				return cible,commande,parametre
-			else : 
-				return False, False, False
-		except :
-			return False,False,False
+		data,addr = sock.recvfrom(1024)
+		if len(data)>1 :
+			cible=data.split('&')[0]
+			commande=data.split('&')[1]
+			parametre=data.split('&')[-1]	
+			return cible,commande,parametre
+		else : 
+			return False, False, False
 	return False, False, False
 		
 		
