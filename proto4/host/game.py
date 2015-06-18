@@ -130,12 +130,13 @@ def set_profil(cible,data):
 		v.dict_connected_devices[str(cible)][splited_data[cursor]] =splited_data[cursor+1]
 		cursor+=2
 
-	if len(v.dict_connected_devices[str(cible)]['name']) >1 and v.dict_player.get(v.dict_connected_devices[str(cible)]['name')==None :
-		v.dict_player[v.dict_connected_devices[str(cible)]['name']]=dict({
-			'has_touch':0,
-			'has_been_touched':0,
-			'score':0;
-		})
+	if len(v.dict_connected_devices[str(cible)]['name']) >1 and v.dict_connected_devices[str(cible)]['type']=="android" :
+		if  v.dict_player.get(v.dict_connected_devices[str(cible)]['name')==None :
+			v.dict_player[v.dict_connected_devices[str(cible)]['name']]=dict({
+				'has_touch':0,
+				'has_been_touched':0,
+				'score':0;
+			})
 
 	c.print_dict()
 
