@@ -45,10 +45,11 @@ server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,1)
 ready_to_listen =False
 game_ready = False
 current_phase ="configuration"
+list_con=list()
 list_serv=list()
 ready_serv=list()
-list_con=list()
-ready_con=list()
+list_send=list()
+ready_send=list()
 #Gestion connexions IP
 dict_connected_devices=dict()
 is_linked = True
