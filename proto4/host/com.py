@@ -3,13 +3,14 @@ from threading import Thread
 import commands
 #import database as d
 
-global id
-id = v.dict_connected_devices
+global ID
+ID = ID
+
 def get_self_ip():
 	return str(commands.getoutput("hostname -I"))[:-1]
 
 def print_dict():	
-	for key in v.dict_connected_devices :
+	for key in ID :
 		print key
 		print id[key]
 
@@ -28,8 +29,8 @@ def raspberry_send(socket,fonction,data):
 def send(target,fonction,data):
 	_,v.ready_send,_= v.select.select([],v.list_send,[],0)
 	for sock in v.ready_send :
-		if v.dict_connected_devices[target]['sock_send'] == sock :
-			if v.dict_connected_devices[target]['type']=="android" :
+		if ID[target]['sock_send'] == sock :
+			if ID[target]['type']=="android" :
 				try :
 					android_send(sock,data)
 				except :
@@ -43,7 +44,7 @@ def send(target,fonction,data):
 	#if target != None :
 	#	print (message, "to ", target)
 	#	print_dict()
-	#	v.dict_connected_devices[target]['sock_send'].send(message.encode("UTF-8"))	
+	#	ID[target]['sock_send'].send(message.encode("UTF-8"))	
 
 def notify_event(type_event,data):
 	global message_event
@@ -51,7 +52,7 @@ def notify_event(type_event,data):
 #	d.write(message_event)	
 
 def init_dict():
-	v.dict_connected_devices[get_self_ip()] = dict({
+	ID[get_self_ip()] = dict({
 		'self_ip' :get_self_ip(),
 		'sock_listen':"",
 		'sock_send':"",
@@ -66,11 +67,11 @@ def init_dict():
 
 def link_new_device(c_addr):
 	v.time.sleep(1)
-	if  v.dict_connected_devices[str(c_addr)]['sock_send'] == None :
+	if  ID[str(c_addr)]['sock_send'] == None :
 		try :
-			v.dict_connected_devices[str(c_addr)]['sock_send'] = v.socket.socket(v.socket.AF_INET,v.socket.SOCK_STREAM)
-			v.dict_connected_devices[str(c_addr)]['sock_send'].connect((str(c_addr),40450))
-			v.list_send.append(v.dict_connected_devices[str(c_addr)]['sock_send'])			
+			ID[str(c_addr)]['sock_send'] = v.socket.socket(v.socket.AF_INET,v.socket.SOCK_STREAM)
+			ID[str(c_addr)]['sock_send'].connect((str(c_addr),40450))
+			v.list_send.append(ID[str(c_addr)]['sock_send'])			
 		except :
 			print("Pas reussi a se connecter en retour")
 
@@ -91,8 +92,8 @@ def listen_all():
 		
 def add_dict(c_socket,c_addr):
 	print(" add dict ")
-	if v.dict_connected_devices.get(str(c_addr[0])) == None:
-		v.dict_connected_devices[str(c_addr[0])] = dict({
+	if ID.get(str(c_addr[0])) == None:
+		ID[str(c_addr[0])] = dict({
 			'self_ip' :str(c_addr[0]),
 			'sock_listen': c_socket,
 			'sock_send':None ,
@@ -109,9 +110,9 @@ def add_dict(c_socket,c_addr):
 		link_new_device(str(c_addr[0]))
 		send(str(c_addr[0]),"hello","you*fdp")
 	else :
-		v.list_con.remove(v.dict_connected_devices[str(c_addr[0])]['sock_listen'])
+		v.list_con.remove(ID[str(c_addr[0])]['sock_listen'])
 		v.list_con.append(c_socket)
-		v.dict_connected_devices[str(c_addr[0])]['sock_listen'] == c_socket	
+		ID[str(c_addr[0])]['sock_listen'] == c_socket	
 
 def configure_server() :
 	v.board.output(v.OUT_GUEST,v.board.HIGH)

@@ -1,6 +1,7 @@
 
 import variables as v
 
+
 def count_left(callback):
 		v.l_now = v.datetime.datetime.now().microsecond
 		v.l_delta=v.l_now-v.l_last

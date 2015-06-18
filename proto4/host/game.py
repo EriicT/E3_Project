@@ -10,6 +10,9 @@ from database import *
 
 import commands
 
+global ID
+ID = v.dict_connected_devices
+
 def off() :
 	pass
 
@@ -18,21 +21,21 @@ def get_self_ip():
 
 def associate_devices():
 	for key in v.dict_connected_devices:
-		if v.dict_connected_devices[key]['role'] == "true_master" :
-			v.dict_connected_devices[key]['associated_device_ip'] = get_self_ip()
-			v.dict_connected_devices[get_self_ip()]['associated_device_ip'] = key
-			v.dict_connected_devices[key]['is_linked'] = True
-			v.dict_connected_devices[get_self_ip()]['is_linked'] = True
+		if ID[key]['role'] == "true_master" :
+			ID[key]['associated_device_ip'] = get_self_ip()
+			ID[get_self_ip()]['associated_device_ip'] = key
+			ID[key]['is_linked'] = True
+			ID[get_self_ip()]['is_linked'] = True
 			break
 			c.print_dict()
 
-		elif v.dict_connected_devices[key]['role'] == "master" :
+		elif ID[key]['role'] == "master" :
 			for second_key in v.dict_connected_devices:
-				if v.dict_connected_devices[second_key]['role'] == "slave_slave" and v.dict_connected_devices[second_key]['is_linked'] == False : 
-					v.dict_connected_devices[key]['associated_device_ip'] = second_key
-					v.dict_connected_devices[second_key]['associated_device_ip'] = key
-					v.dict_connected_devices[key]['is_linked'] = True
-					v.dict_connected_devices[second_key]['is_linked'] = True
+				if ID[second_key]['role'] == "slave_slave" and ID[second_key]['is_linked'] == False : 
+					ID[key]['associated_device_ip'] = second_key
+					ID[second_key]['associated_device_ip'] = key
+					ID[key]['is_linked'] = True
+					ID[second_key]['is_linked'] = True
 					c.send(key,"setmate","associated_device_ip*"+str(second_key))
 					c.send(second_key,"setmate","associated_device_ip*"+str(key))
 			break		
@@ -143,12 +146,12 @@ def set_profil(cible,data):
 	cursor = 0
 	while cursor != len_data :
 		print(cursor)
-		v.dict_connected_devices[str(cible)][splited_data[cursor]] =splited_data[cursor+1]
+		ID[str(cible)][splited_data[cursor]] =splited_data[cursor+1]
 		cursor+=2
 
-	if (len(v.dict_connected_devices[str(cible)]['name'])>1) and v.dict_connected_devices[str(cible)]['type']=="android" :
-		if  v.dict_player.get(v.dict_connected_devices[str(cible)]['name'])==None :
-			v.dict_player[v.dict_connected_devices[str(cible)]['name']]=dict({
+	if (len(ID[str(cible)]['name'])>1) and ID[str(cible)]['type']=="androID" :
+		if  v.dict_player.get(ID[str(cible)]['name'])==None :
+			v.dict_player[ID[str(cible)]['name']]=dict({
 				'has_touch':0,
 				'has_been_touched':0,
 				'score':0,
@@ -159,17 +162,17 @@ def set_profil(cible,data):
 
 def set_mate(data):
 	set_profil(get_self_ip(),data)
-	c.send(get_self_ip(),"setprofil",v.dict_connected_devices[get_self_ip()]['feedback'])
+	c.send(get_self_ip(),"setprofil",ID[get_self_ip()]['feedback'])
 
 def start_game():
 	n_feedback =0
 	for key in v.dict_connected_devices :
-		if v.dict_connected_devices[key]['feedback'].startswith("True") : 
+		if ID[key]['feedback'].startswith("True") : 
 			n_feedback += 1
 			print(n_feedback)
 			if n_feedback==(int(v.n_player)*2) and n_feedback !=0 :
 				for key in v.dict_connected_devices :
-					c.send(v.dict_connected_devices[key]['self_ip'],"start_game","kikou")
+					c.send(ID[key]['self_ip'],"start_game","kikou")
 #		init_timer(v.duration)
 #		watchdog_timer()
 				v.current_phase = "in_game"
@@ -188,7 +191,7 @@ def start_game_slave():
 
 def process_command_pre_game(emetteur,commande,data):
 	print(emetteur, commande,data)
-	if v.dict_connected_devices[emetteur]['associated_device_ip']==get_self_ip() and commande == "setgame" and v.configuration=="HOST":
+	if ID[emetteur]['associated_device_ip']==get_self_ip() and commande == "setgame" and v.configuration=="HOST":
 		print("setgame")
 		set_game(data)
 	elif commande =="setprofile":
@@ -197,7 +200,7 @@ def process_command_pre_game(emetteur,commande,data):
 			associate_devices()
 			c.print_dict()
 	elif commande=="request_feedback":
-		c.send(get_self_ip(),"setprofil",v.dict_connected_devices[get_self_ip()]['feedback'])
+		c.send(get_self_ip(),"setprofil",ID[get_self_ip()]['feedback'])
 	elif commande =="setmate" :
 		set_mate(data)
 		print("set_mate")
@@ -210,7 +213,7 @@ def process_command_pre_game(emetteur,commande,data):
 
 def process_command_in_game(emetteur,commande,data):
 	print(emetteur , commande , data)
-	if  v.dict_connected_devices[get_self_ip()]['associated_device_ip'] == emetteur :	
+	if  ID[get_self_ip()]['associated_device_ip'] == emetteur :	
 		if commande == "moteur" :
 			moteur(data)	
 		elif commande == "laser":
