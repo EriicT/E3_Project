@@ -3,13 +3,15 @@ from threading import Thread
 import commands
 #import database as d
 
+global id
+id = v.dict_connected_devices
 def get_self_ip():
 	return str(commands.getoutput("hostname -I"))[:-1]
 
 def print_dict():	
 	for key in v.dict_connected_devices :
 		print key
-		print v.dict_connected_devices[key]
+		print id[key]
 
 
 def off(callback):
@@ -17,19 +19,27 @@ def off(callback):
 	v.server.close()
 	sys.exit("bye")
 
+def android_send(socket,data):
+	socket.send((data).encode("UTF-8"))
+
+def raspberry_send(socket,fonction,data):
+	socket.send(get_self_ip()+"&"+fonction+"&"+data)
+	
 def send(target,fonction,data):
-	global message
-	_,v.ready_send,_ = v.select.select([],v.list_send,[],0)
-	message = get_self_ip()+"&" + fonction+ "&"  +data
+	_,v.ready_send,_= v.select.select([],v.list_send,[],0)
 	for sock in v.ready_send :
-		print(sock)
-		print(v.dict_connected_devices[target]['sock_send'])
 		if v.dict_connected_devices[target]['sock_send'] == sock :
-			sock.send(message.encode("UTF-8"))
-			print(message + " to " + target)
-			break
-		else :
-			pass
+			if v.dict_connected_devices[target]['type']=="android" :
+				try :
+					android_send(sock,data)
+				except :
+					print("Envoie a " +target +"(android), echoue")
+			else :
+				try :
+					raspberry_send(sock,fonction,data)
+				except :	
+					print("Envoie a "+target+"(raspberry),echoue")
+		
 	#if target != None :
 	#	print (message, "to ", target)
 	#	print_dict()
@@ -55,6 +65,7 @@ def init_dict():
 	})
 
 def link_new_device(c_addr):
+	v.time.sleep(1)
 	if  v.dict_connected_devices[str(c_addr)]['sock_send'] == None :
 		try :
 			v.dict_connected_devices[str(c_addr)]['sock_send'] = v.socket.socket(v.socket.AF_INET,v.socket.SOCK_STREAM)
@@ -96,7 +107,7 @@ def add_dict(c_socket,c_addr):
 		print c_socket
 		print(v.list_con[0])
 		link_new_device(str(c_addr[0]))
-		send(str(c_addr[0]),"hello","you")
+		send(str(c_addr[0]),"hello","you*fdp")
 	else :
 		v.list_con.remove(v.dict_connected_devices[str(c_addr[0])]['sock_listen'])
 		v.list_con.append(c_socket)
@@ -110,7 +121,6 @@ def configure_server() :
 	print("--- Server has been successfully set up ---")
 	v.time.sleep(0.2)
 	print_dict()
-
 	return True
 
 def thread_server():

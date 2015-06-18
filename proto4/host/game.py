@@ -71,6 +71,7 @@ def pause():
 def set_configuration(config):
 	v.HOST = get_self_ip()
 	c.init_dict()
+	init_laser("HOST")
 	create_database()
 
 def enable_detection(phase,state):
@@ -90,23 +91,38 @@ def enable_detection(phase,state):
 			init_laser(v.configuration)
 			v.board.add_event_detect(v.IN_L, v.board.RISING, callback=count_left)
 			v.board.add_event_detect(v.IN_R, v.board.RISING, callback=count_right)
-			v.board.add_event_detect(v.IN_B, v.board.RISING, callback=count_back)
+			#v.board.add_event_detect(v.IN_B, v.board.RISING, callback=count_back)
 		else :
 			v.board.remove_event_detect(v.IN_L)
 			v.board.remove_event_detect(v.IN_R)
-			v.board.remove_event_detect(v.IN_B)
+			#v.board.remove_event_detect(v.IN_B)
 	elif phase =="all":
 			if state == True : 
 				v.board.add_event_detect(v.IN_L, v.board.RISING, callback=count_left)
 				v.board.add_event_detect(v.IN_R, v.board.RISING, callback=count_right)
-				v.board.add_event_detect(v.IN_B, v.board.RISING, callback=count_back)
+				#v.board.add_event_detect(v.IN_B, v.board.RISING, callback=count_back)
 				#leds
 			else :
 				v.board.remove_event_detect(v.IN_L)
 				v.board.remove_event_detect(v.IN_R)
-				v.board.remove_event_detect(v.IN_B)
+				#v.board.remove_event_detect(v.IN_B)
 				#leds
 	
+def recept_event(emetteur,data):
+	global player1,player2, name_player1, name_player2
+	for key in v.dict_player:
+		if emetteur == v.dict_player[key]['ip'] :
+			player1=v.dict_player[key]['ip']
+			name_player=key
+		else :
+			player2=v.dict_player[key]['ip']
+			name_player2=key
+	try :
+		new_event(player1,player2,data,v.csvf)
+		c.send(emetteur,"lolol","beTouched&"+name_player2)
+		c.send(v.dict_player[key]['ip'],"lolol","hitTarget&"+name_player1)
+	except :
+		pass
 def set_game(data):
 	v.n_player=int(data.split('*')[0])
 	v.duration=int(data.split('*')[-1][0])
@@ -130,12 +146,13 @@ def set_profil(cible,data):
 		v.dict_connected_devices[str(cible)][splited_data[cursor]] =splited_data[cursor+1]
 		cursor+=2
 
-	if len(v.dict_connected_devices[str(cible)]['name']) >1 and v.dict_connected_devices[str(cible)]['type']=="android" :
-		if  v.dict_player.get(v.dict_connected_devices[str(cible)]['name')==None :
+	if (len(v.dict_connected_devices[str(cible)]['name'])>1) and v.dict_connected_devices[str(cible)]['type']=="android" :
+		if  v.dict_player.get(v.dict_connected_devices[str(cible)]['name'])==None :
 			v.dict_player[v.dict_connected_devices[str(cible)]['name']]=dict({
 				'has_touch':0,
 				'has_been_touched':0,
-				'score':0;
+				'score':0,
+				'ip':str(cible),
 			})
 
 	c.print_dict()
@@ -170,7 +187,7 @@ def start_game_slave():
 
 
 def process_command_pre_game(emetteur,commande,data):
-
+	print(emetteur, commande,data)
 	if v.dict_connected_devices[emetteur]['associated_device_ip']==get_self_ip() and commande == "setgame" and v.configuration=="HOST":
 		print("setgame")
 		set_game(data)
@@ -193,7 +210,7 @@ def process_command_pre_game(emetteur,commande,data):
 
 def process_command_in_game(emetteur,commande,data):
 	print(emetteur , commande , data)
-	if  v.dict_connected_devices[get_self_ip()]['associated_device_ip'] == emetteur :
+	if  v.dict_connected_devices[get_self_ip()]['associated_device_ip'] == emetteur :	
 		if commande == "moteur" :
 			moteur(data)	
 		elif commande == "laser":
@@ -201,8 +218,8 @@ def process_command_in_game(emetteur,commande,data):
 		elif commande == "stop" :
 			print("G GAGNER")
 			v.is_playable=False
-		elif v.configuration == "HOST" and commande == "notify_event" :
-			write_database(emetteur,commande,data)
+		elif commande == "notify_event" :
+			recept_event(emetteur,data)
 		else :
 			pass
 

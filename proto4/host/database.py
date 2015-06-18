@@ -4,17 +4,6 @@ import variables as v
 import datetime
 import os
 
-v.dict_player["Eric"]=dict({
-				'has_touch':0,
-				'has_been_touched':0,
-				'score':0,
-			})
-v.dict_player["Arnaud"]=dict({
-				'has_touch':0,
-				'has_been_touched':0,
-				'score':0,
-			})
-
 def format(player):
 	global db
 	db =v.dict_player[player]
@@ -61,11 +50,4 @@ def new_event(player1,player2, event_type,file):
 		pass		 
 
 
-file = create_database()
-print file
-for i in range (0,5):
-	new_event("Eric","Arnaud","touched",file)
-for i in range (0,3):
-	new_event("Arnaud","Eric","touched",file)
-os.system("sudo nano "+file)
 	 
