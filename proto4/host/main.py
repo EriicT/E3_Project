@@ -6,6 +6,7 @@ from game import *
 if configuration():
 	if configure_server():
 		init_server()
+		set_configuration(v.configuration)
 
 v.board.output(v.OUT_RDY,v.board.HIGH)
 
