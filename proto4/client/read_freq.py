@@ -1,5 +1,7 @@
 
 import variables as v
+import com as c
+
 
 def count_left(callback):
 		v.l_now = v.datetime.datetime.now().microsecond
@@ -14,6 +16,7 @@ def count_left(callback):
 			v.l_echant=0
 			v.l_duree_echant=0
 			v.l_last=v.l_now
+			c.send(c.get_self_ip(),"notify_event","touched")
 			v.board.remove_event_detect(v.IN_L)
 			v.time.sleep(2)
 			v.board.add_event_detect(v.IN_L, v.board.RISING,callback=count_left)
@@ -38,6 +41,11 @@ def count_right(callback):
 			v.r_echant=0
 			v.r_duree_echant=0
 			v.r_last=v.r_now
+			c.send(c.get_self_ip(),"notify_event","touched")
+			v.board.remove_event_detect(v.IN_R)
+			v.time.sleep(2)
+			v.board.add_event_detect(v.IN_R, v.board.RISING,callback=count_right)
+
 		elif v.r_moyenne_echant>1900 or 1750>v.r_moyenne_echant:
 			v.r_last=v.r_now
 			v.r_echant=0
@@ -58,6 +66,11 @@ def count_back(callback):
 			v.b_echant=0
 			v.b_duree_echant=0
 			v.b_last=v.b_now
+			c.send(c.get_self_ip(),"notify_event","touched")
+			v.board.remove_event_detect(v.IN_R)
+			v.time.sleep(2)
+			v.board.add_event_detect(v.IN_R, v.board.RISING,callback=count_right)
+
 		elif v.b_moyenne_echant>1900 or 1750>v.b_moyenne_echant:
 			v.b_last=v.b_now
 			v.b_echant=0

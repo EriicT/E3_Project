@@ -57,7 +57,6 @@ def notify_event(type_event,data):
 	global message_event
 	message_event=str(type_event)+data
 	c.send("10.5.5.1","notify_event",message_event)
-	c.send(ID[get_self_ip()]['associated_device_ip'],"notify_event",message_event)
 
 
 def init_dict():
