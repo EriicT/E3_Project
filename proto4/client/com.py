@@ -2,16 +2,19 @@ import variables as v
 from threading import Thread
 import commands
 
+global ID
+ID=v.dict_connected_devices
+
 def get_self_ip():
 	return str(commands.getoutput("hostname -I"))[:-1]
 
 def print_dict():	
-	for key in v.dict_connected_devices :
+	for key in ID :
 		print key
-		print v.dict_connected_devices[key]
+		print ID[key]
 
 def connect(addr) :
-	v.dict_connected_devices[str(addr)] = dict({
+	ID[str(addr)] = dict({
 		'self_ip' : str(addr),
 		'sock_listen' : None ,
 		'sock_send' : None,
@@ -29,25 +32,36 @@ def off(callback):
 	v.server.close()
 	sys.exit("bye")
 
+def android_send(socket,data):
+	socket.send((data).encode("UTF-8"))
+
+def raspberry_send(socket,fonction,data):
+	socket.send(get_self_ip()+"&"+fonction+"&"+data)
+	
 def send(target,fonction,data):
-	global message 
-	if target != None :
-		message = get_self_ip()+"&" + fonction+ "&"  +data
-		print message
-		try :
-			v.dict_connected_devices[str(target)]['sock_send'].send(message.encode("UTF-8"))	
-		except :
-			print("Fail message")
+	_,v.ready_send,_= v.select.select([],v.list_send,[],0)
+	for sock in v.ready_send :
+		if ID[target]['sock_send'] == sock :
+			if ID[target]['type']=="android" :
+				try :
+					android_send(sock,data)
+				except :
+					print("Envoie a " +target +"(android), echoue")
+			else :
+				try :
+					raspberry_send(sock,fonction,data)
+				except :	
+					print("Envoie a "+target+"(raspberry),echoue")
 
 def notify_event(type_event,data):
 	global message_event
 	message_event=str(type_event)+data
 	c.send("10.5.5.1","notify_event",message_event)
-	c.send(v.dict_connected_devices[get_self_ip()]['associated_device_ip'],"notify_event",message_event)
+	c.send(ID[get_self_ip()]['associated_device_ip'],"notify_event",message_event)
 
 
 def init_dict():
-	v.dict_connected_devices["10.5.5.1"] =dict({
+	ID["10.5.5.1"] =dict({
 		'self_ip' : "10.5.5.1",
 		'sock_listen' :"",
 		'sock_send' : v.socket.socket(v.socket.AF_INET,v.socket.SOCK_STREAM),			
@@ -61,14 +75,14 @@ def init_dict():
 	try :
 		v.time.sleep(1)
 		print("jvais me connecter au host")
-		v.dict_connected_devices["10.5.5.1"]['sock_send'].connect(('10.5.5.1',40450))
+		ID["10.5.5.1"]['sock_send'].connect(('10.5.5.1',40450))
 		send("10.5.5.1","setprofile","name*raspberry2*type*raspberry*role*slave_slave")
 		print("Envoi configuration reussi")
 
 	except :
 		print("Configuration n'a pas marche")
 
-	v.dict_connected_devices[get_self_ip()] = dict({
+	ID[get_self_ip()] = dict({
 		'self_ip' :get_self_ip(),
 		'sock_listen':"",
 		'sock_send':"",
@@ -86,11 +100,11 @@ def init_dict():
 
 def link_new_device(c_addr):
 	print_dict()
-	if  v.dict_connected_devices[str(c_addr)]['sock_send'] == None :
+	if  ID[str(c_addr)]['sock_send'] == None :
 		try :
-			v.dict_connected_devices[str(c_addr)]['sock_send'] = v.socket.socket(v.socket.AF_INET,v.socket.SOCK_STREAM)
-			v.dict_connected_devices[str(c_addr)]['sock_send'].connect((c_addr[0],40450))
-		
+			ID[str(c_addr)]['sock_send'] = v.socket.socket(v.socket.AF_INET,v.socket.SOCK_STREAM)
+			ID[str(c_addr)]['sock_send'].connect((c_addr[0],40450))
+			v.list_send.append(ID[str(c_addr)]['sock_send'])
 		except :
 			print("Pas reussi a se connecter en retour")
 
@@ -110,8 +124,8 @@ def listen_all():
 	return False, False, False
 		
 def add_dict(c_socket,c_addr):
-	if str(c_addr[0]) != "10.5.5.1" and v.dict_connected_devices.get(str(c_addr[0])) == None:
-		v.dict_connected_devices[str(c_addr[0])] = dict({
+	if str(c_addr[0]) != "10.5.5.1" and ID.get(str(c_addr[0])) == None:
+		ID[str(c_addr[0])] = dict({
 			'self_ip' :str(c_addr[0]),
 			'sock_listen': c_socket,
 			'sock_send':None ,
@@ -122,16 +136,16 @@ def add_dict(c_socket,c_addr):
 			'associated_device_ip': "",
 			'feedback':"True",
 		})
-		print(v.dict_connected_devices)
+		print(ID)
 		link_new_device(str(c_addr[0]))
 		v.list_con.append(c_socket)
 	else :
 		try :
-			v.list_con.remove(v.dict_connected_devices[str(c_addr[0])]['sock_listen'])
+			v.list_con.remove(ID[str(c_addr[0])]['sock_listen'])
 		except :
 			pass
 		v.list_con.append(c_socket)
-		v.dict_connected_devices[str(c_addr[0])]['sock_listen'] == c_socket	
+		ID[str(c_addr[0])]['sock_listen'] == c_socket	
 
 def configure_server() :
 	v.board.output(v.OUT_GUEST,v.board.HIGH)

@@ -10,6 +10,8 @@ from read_freq import *
 
 import commands
 
+global ID
+ID=v.dict_connected_devices
 
 def get_self_ip():
 	return str(commands.getoutput("hostname -I"))[:-1]
@@ -72,16 +74,16 @@ def set_profil(cible,data):
 	len_data=len(splited_data)
 	cursor = 0
 	while cursor != len_data :
-		v.dict_connected_devices[cible][splited_data[cursor]] = splited_data[cursor+1]
+		ID[cible][splited_data[cursor]] = splited_data[cursor+1]
 		cursor+=2
 	c.print_dict()
 
 def set_mate(data):
 	set_profil(get_self_ip(),data)
-	#c.send(get_self_ip(),"setprofil",v.dict_connected_devices[get_self_ip()]['feedback'])
+	#c.send(get_self_ip(),"setprofil",ID[get_self_ip()]['feedback'])
 	c.connect(str(data.split('*')[-1]))
-	v.dict_connected_devices[get_self_ip()]['feedback'] = "True"
-	c.send("10.5.5.1","setprofile","feedback*"+v.dict_connected_devices[get_self_ip()]['feedback'])
+	ID[get_self_ip()]['feedback'] = "True"
+	c.send("10.5.5.1","setprofile","feedback*"+ID[get_self_ip()]['feedback'])
 	c.print_dict()
 
 def start_game_slave():
@@ -95,14 +97,14 @@ def process_command_pre_game(emetteur,commande,data):
 	print emetteur
 	print commande
 	print data
-	print v.dict_connected_devices[get_self_ip()]['associated_device_ip']
+	print ID[get_self_ip()]['associated_device_ip']
 	if commande =="setprofil":
 		set_profil(emetteur,data)
 		c.print_dict()
 	elif commande == "stop":	
 		quit_game(emetteur)
 	elif commande=="request_feedback":
-		c.send(get_self_ip(),"setprofil",v.dict_connected_devices[get_self_ip()]['feedback'])
+		c.send(get_self_ip(),"setprofil",ID[get_self_ip()]['feedback'])
 	elif commande =="setmate" :
 		set_mate(data)
 		print("setmate")
@@ -112,7 +114,7 @@ def process_command_pre_game(emetteur,commande,data):
 		pass
 
 def process_command_in_game(emetteur,commande,data):
-	if  v.dict_connected_devices[get_self_ip()]['associated_device_ip'] == emetteur :
+	if  ID[get_self_ip()]['associated_device_ip'] == emetteur :
 		if commande == "moteur" :
 			moteur(data)	
 		elif commande == "laser":
