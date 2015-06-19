@@ -16,7 +16,7 @@ def count_left(callback):
 			v.l_echant=0
 			v.l_duree_echant=0
 			v.l_last=v.l_now
-			c.send(c.get_self_ip(),"notify_event","touched")
+			c.send("10.5.5.1","notify_event","touched")
 			v.board.remove_event_detect(v.IN_L)
 			v.time.sleep(2)
 			v.board.add_event_detect(v.IN_L, v.board.RISING,callback=count_left)
@@ -41,7 +41,7 @@ def count_right(callback):
 			v.r_echant=0
 			v.r_duree_echant=0
 			v.r_last=v.r_now
-			c.send(c.get_self_ip(),"notify_event","touched")
+			c.send("10.5.5.1","notify_event","touched")
 			v.board.remove_event_detect(v.IN_R)
 			v.time.sleep(2)
 			v.board.add_event_detect(v.IN_R, v.board.RISING,callback=count_right)
@@ -66,7 +66,7 @@ def count_back(callback):
 			v.b_echant=0
 			v.b_duree_echant=0
 			v.b_last=v.b_now
-			c.send(c.get_self_ip(),"notify_event","touched")
+			c.send("10.5.5.1","notify_event","touched")
 			v.board.remove_event_detect(v.IN_R)
 			v.time.sleep(2)
 			v.board.add_event_detect(v.IN_R, v.board.RISING,callback=count_right)

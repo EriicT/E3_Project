@@ -53,11 +53,6 @@ def send(target,fonction,data):
 				except :	
 					print("Envoie a "+target+"(raspberry),echoue")
 
-def notify_event(type_event,data):
-	global message_event
-	message_event=str(type_event)+data
-	c.send("10.5.5.1","notify_event",message_event)
-
 
 def init_dict():
 	ID["10.5.5.1"] =dict({

@@ -13,6 +13,9 @@ import commands
 global ID
 ID = v.dict_connected_devices
 
+global players
+players=v.dict_player
+
 def off() :
 	pass
 
@@ -71,6 +74,15 @@ def watchdog_timer():
 def pause():
 	enable_detection("all",False)
 
+
+def send_score(player1,player2,socket):
+	global long_score_1, long_score_2
+	long_score_1 += str(player1)+str("|")+str(players[player1]['has_touch'])+str("|")+str(players[player1]['has_been_touched'])+str("|")+str(players[player1]['score'])
+	long_score_2 += str(player2)+str("|")+str(players[player2]['has_touch'])+str("|")+str(players[player2]['has_been_touched'])+str("|")+str(players[player2]['score'])
+	c.send(players[player1]['ip'],"android",str("score")+long_score_1+str("&")+long_score_2)
+	c.send(players[player2]['ip'],"android",str("score")+long_score_2+str("&")+long_score_1)
+
+
 def set_configuration(config):
 	v.HOST = get_self_ip()
 	c.init_dict()
@@ -126,6 +138,7 @@ def recept_event(emetteur,data):
 		c.send(v.dict_player[key]['ip'],"lolol","hitTarget&"+name_player1)
 	except :
 		pass
+
 def set_game(data):
 	v.n_player=int(data.split('*')[0])
 	v.duration=int(data.split('*')[-1][0])
