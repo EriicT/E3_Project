@@ -7,10 +7,12 @@ def init_laser(player):
 
 	
 def laser(state):
-	if state == "ON" :
-		v.laser.start(50)
-	elif state == "OFF" :
-		v.laser.start(0)
-	else : 
+	try :
+		if state == "ON" :
+			v.laser.start(50)
+		elif state == "OFF":
+			v.laser.start(0)
+		else :
+			pass
+	except :
 		pass
-
