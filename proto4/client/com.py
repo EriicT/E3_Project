@@ -67,12 +67,11 @@ def init_dict():
 		'feedback' : "",
 	})
 	try :
-		v.time.sleep(1)
 		print("jvais me connecter au host")
-		ID["10.5.5.1"]['sock_send'].connect(('10.5.5.1',40450))
+		ID["10.5.5.1"]['sock_send'].connect(("10.5.5.1",40450))
+		v.list_send.append(ID["10.5.5.1"]['sock_send'])	
 		send("10.5.5.1","setprofile","name*raspberry2*type*raspberry*role*slave_slave")
 		print("Envoi configuration reussi")
-
 	except :
 		print("Configuration n'a pas marche")
 
@@ -90,11 +89,9 @@ def init_dict():
 	print_dict()
 
 
-
-
 def link_new_device(c_addr):
 	print_dict()
-	if  ID[str(c_addr)]['sock_send'] == None :
+	if  ID[str(c_addr)]['sock_send'] == None and c_addr != "10.5.5.1" :
 		try :
 			ID[str(c_addr)]['sock_send'] = v.socket.socket(v.socket.AF_INET,v.socket.SOCK_STREAM)
 			ID[str(c_addr)]['sock_send'].connect((c_addr[0],40450))
@@ -107,8 +104,8 @@ def listen_all():
 	ready_con,_,_= v.select.select(v.list_con,[],[],0)
 	for sock in ready_con:
 		data,addr = sock.recvfrom(1024)
-		if len(data)>1 :
-			print data
+		if len(data)>1:
+
 			cible=data.split('&')[0]
 			commande=data.split('&')[1]
 			parametre=data.split('&')[-1]	
@@ -142,7 +139,6 @@ def add_dict(c_socket,c_addr):
 		ID[str(c_addr[0])]['sock_listen'] == c_socket	
 
 def configure_server() :
-	v.board.output(v.OUT_GUEST,v.board.HIGH)
 	print("--- Server is being initalized ---")
 	print(" MY IP IS " + str( v.HOST) )
 	v.server.bind((v.HOST,v.PORT))

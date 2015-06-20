@@ -26,8 +26,9 @@ def set_configuration(config):
 def enable_detection(phase,state):
 	if phase == "configuration" :
 		if state == True :
-			v.board.add_event_detect(v.IN_START, v.board.RISING,callback=off,bouncetime=300)
-			v.board.add_event_detect(v.IN_SELECT,v.board.RISING,callback=switch,bouncetime=1)
+#			v.board.add_event_detect(v.IN_START, v.board.RISING,callback=off,bouncetime=300)
+#			v.board.add_event_detect(v.IN_SELECT,v.board.RISING,callback=switch,bouncetime=1)
+			pass
 		else :
 			v.board.remove_event_detect(v.IN_SELECT)
 			v.board.remove_event_detect(v.IN_START)
@@ -80,40 +81,39 @@ def set_profil(cible,data):
 
 def set_mate(data):
 	set_profil(get_self_ip(),data)
-	#c.send(get_self_ip(),"setprofil",ID[get_self_ip()]['feedback'])
-	c.connect(str(data.split('*')[-1]))
 	ID[get_self_ip()]['feedback'] = "True"
 	c.send("10.5.5.1","setprofile","feedback*"+ID[get_self_ip()]['feedback'])
 	c.print_dict()
 
 def start_game_slave():
-	v.current_phase = "in_game"
-	enable_detection("configuration",False)
-	enable_detection("in_game",True)
-	return True 
+	if v.start_signal == True :
+		print("in game")
+		v.current_phase = "in_game"
+		enable_detection("configuration",False)
+		enable_detection("in_game",True)
+		return True
+	else :
+		return False 
 
 	
 def process_command_pre_game(emetteur,commande,data):
-	print emetteur
-	print commande
-	print data
-	print ID[get_self_ip()]['associated_device_ip']
-	if commande =="setprofil":
+	print("in process command")
+	if commande =="setprofile":
 		set_profil(emetteur,data)
 		c.print_dict()
 	elif commande == "stop":	
-		quit_game(emetteur)
-	elif commande=="request_feedback":
-		c.send(get_self_ip(),"setprofil",ID[get_self_ip()]['feedback'])
+		stop()
 	elif commande =="setmate" :
+		print("go to setmate")
 		set_mate(data)
 		print("setmate")
 	elif commande == "start":
-		start_game_slave()
+		v.start_signal = True
 	else :
 		pass
 
 def process_command_in_game(emetteur,commande,data):
+	print(emetteur,commande,data)
 	if  ID[get_self_ip()]['associated_device_ip'] == emetteur :
 		if commande == "moteur" :
 			moteur(data)	

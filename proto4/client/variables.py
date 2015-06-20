@@ -21,10 +21,9 @@ MD_EN = 15
 OUT_LASER = 19
 
 #Leds
-OUT_RDY = 31
-OUT_GUEST = 33
-OUT_HOST = 35
-OUT_ON = 37
+OUT_T = 31
+OUT_R = 33
+OUT_L = 35
 
 #Panneau photovoltaique
 IN_L = 8
@@ -50,6 +49,7 @@ list_serv=list()
 ready_serv=list()
 list_send=list()
 ready_send=list()
+start_signal=False
 #Gestion connexions IP
 dict_connected_devices=dict()
 is_linked = True
@@ -115,10 +115,9 @@ board.setup(MD_BW,board.OUT)
 board.setup(MD_FW,board.OUT)
 board.setup(MD_EN,board.OUT)
 board.setup(OUT_LASER,board.OUT)
-board.setup(OUT_RDY,board.OUT)
-board.setup(OUT_GUEST,board.OUT)
-board.setup(OUT_HOST,board.OUT)
-board.setup(OUT_ON,board.OUT)
+board.setup(OUT_T,board.OUT)
+board.setup(OUT_R,board.OUT)
+board.setup(OUT_L,board.OUT)
 board.setup(IN_SELECT,board.IN,pull_up_down=board.PUD_DOWN)
 board.setup(IN_START,board.IN,pull_up_down=board.PUD_DOWN)
 board.setup(IN_B,board.IN,pull_up_down=board.PUD_UP)
@@ -132,10 +131,9 @@ board.output(MD_BW,board.LOW)
 board.output(MD_FW,board.LOW)
 board.output(MD_EN,board.LOW)
 board.output(OUT_LASER,board.LOW)
-board.output(OUT_RDY,board.LOW)
-board.output(OUT_GUEST,board.LOW)
-board.output(OUT_HOST,board.LOW)
-board.output(OUT_ON,board.HIGH)
+board.output(OUT_T,board.LOW)
+board.output(OUT_R,board.LOW)
+board.output(OUT_L,board.LOW)
 
 #Laser 
 laser =board.PWM(OUT_LASER,1)

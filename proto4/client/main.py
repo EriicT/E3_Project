@@ -6,12 +6,10 @@ from game import *
 
 init_laser("GUEST")
 laser("ON")
-enable_detection("in_game",True)
 if configuration():
 	if configure_server():
 		init_server()
 
-v.board.output(v.OUT_RDY,v.board.HIGH)
 
 while v.is_linked!=v.is_playable :
 	thread_server()			
@@ -22,10 +20,11 @@ while v.is_linked!=v.is_playable :
 		process_command_pre_game(interlocuteur,commande,parametre)			
 		v.is_playable = start_game_slave()
 	if v.is_playable :
-			break
-
-
+		print("IN REAL GAME")
+		break
+	
 while v.is_playable :
+	thread_server()
 	interlocuteur,commande,parametre=listen_all()
 	if interlocuteur == False :
 		pass
