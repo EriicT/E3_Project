@@ -136,9 +136,9 @@ board.setup(OUT_R,board.OUT)
 board.setup(OUT_L,board.OUT)
 board.setup(IN_SELECT,board.IN,pull_up_down=board.PUD_DOWN)
 board.setup(IN_START,board.IN,pull_up_down=board.PUD_DOWN)
-board.setup(IN_B,board.IN,pull_up_down=board.PUD_UP)
-board.setup(IN_R,board.IN,pull_up_down=board.PUD_UP)
-board.setup(IN_L,board.IN,pull_up_down=board.PUD_UP)
+board.setup(IN_B,board.IN,pull_up_down=board.PUD_DOWN)
+board.setup(IN_R,board.IN,pull_up_down=board.PUD_DOWN)
+board.setup(IN_L,board.IN,pull_up_down=board.PUD_DOWN)
 	
 board.output(MG_BW,board.LOW)
 board.output(MG_FW,board.LOW)
@@ -153,10 +153,10 @@ board.output(OUT_LASER,board.LOW)
 #board.output(OUT_ON,board.HIGH)
 
 #Configuration Moteur
-PWM_MG_BW=board.PWM(MG_BW,500)
-PWM_MG_FW=board.PWM(MG_FW,500)
-PWM_MD_BW=board.PWM(MD_BW,500)
-PWM_MD_FW=board.PWM(MD_FW,500)
+PWM_MG_BW=board.PWM(MG_BW,50)
+PWM_MG_FW=board.PWM(MG_FW,50)
+PWM_MD_BW=board.PWM(MD_BW,50)
+PWM_MD_FW=board.PWM(MD_FW,50)
 #PWM_MD_FW.start(50)
 m_now=0
 m_last=0

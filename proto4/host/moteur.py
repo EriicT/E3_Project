@@ -31,7 +31,7 @@ def moteur(commande):
 		if vitesse_r==0 :
 			if angle_r > 50 : 
 				v.PWM_MG_FW.start(angle_r)
-				v.PWM_MG_BW.start(angle_r)
+				v.PWM_MD_BW.start(angle_r)
 			elif angle_r< -50  :
 				v.PWM_MG_BW.start(abs(angle_r))
 				v.PWM_MD_FW.start(abs(angle_r))

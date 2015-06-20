@@ -23,7 +23,7 @@ while v.is_linked!=v.is_playable :
 	if v.is_playable :
 		break
 
-score_timer()
+#score_timer()
 while v.is_playable :
 	interlocuteur,commande,parametre=listen_all()
 	if interlocuteur == False :			
