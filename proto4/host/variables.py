@@ -6,6 +6,7 @@ import threading
 import time
 import collections
 import select
+import os 
 
 #Moteur Gauche
 MG_BW = 3
@@ -14,17 +15,16 @@ MG_EN = 7
 
 #Moteur Droit 
 MD_BW = 11
-MD_FW = 13
-MD_EN = 15
+MD_FW = 15
+#MD_EN = 15
 
 #Laser
 OUT_LASER = 19
 
 #Leds
-OUT_RDY = 31
-OUT_GUEST = 33
-OUT_HOST = 35
-OUT_ON = 37
+OUT_T = 31
+OUT_R = 35
+OUT_L = 33
 
 #Panneau photovoltaique
 IN_L = 8
@@ -55,20 +55,25 @@ set_frequencies=dict()
 set_laser["GUEST"]=dict({
 	'frequency':540*1.08,
 	'echant':39,
-	'max_period':1869,
-	'min_period':1834,
+	'max_period': 1801,
+	'min_period': 1769,
 	})
 set_laser["HOST"]=dict({
 	'frequency':560*1.08,
 	'echant':40,
-	'max_period':1801,
-	'min_period':1769,
+	'max_period':1869,
+	'min_period':1834,
 })
+
 list_con=list()
 list_serv=list()
 ready_serv=list()
 list_send=list()
 ready_send=list()
+player1=""
+player2=""
+name_player1=""
+name_player2=""
 
 #Timer
 start_timer=0
@@ -123,12 +128,12 @@ board.setup(MG_FW,board.OUT)
 board.setup(MG_EN,board.OUT)
 board.setup(MD_BW,board.OUT)
 board.setup(MD_FW,board.OUT)
-board.setup(MD_EN,board.OUT)
+#board.setup(MD_EN,board.OUT)
 board.setup(OUT_LASER,board.OUT)
-board.setup(OUT_RDY,board.OUT)
-board.setup(OUT_GUEST,board.OUT)
-board.setup(OUT_HOST,board.OUT)
-board.setup(OUT_ON,board.OUT)
+#board.setup(OUT_RDY,board.OUT)
+board.setup(OUT_T,board.OUT)
+board.setup(OUT_R,board.OUT)
+board.setup(OUT_L,board.OUT)
 board.setup(IN_SELECT,board.IN,pull_up_down=board.PUD_DOWN)
 board.setup(IN_START,board.IN,pull_up_down=board.PUD_DOWN)
 board.setup(IN_B,board.IN,pull_up_down=board.PUD_UP)
@@ -140,18 +145,19 @@ board.output(MG_FW,board.LOW)
 board.output(MG_EN,board.LOW)
 board.output(MD_BW,board.LOW)
 board.output(MD_FW,board.LOW)
-board.output(MD_EN,board.LOW)
+#board.output(MD_EN,board.LOW)
 board.output(OUT_LASER,board.LOW)
-board.output(OUT_RDY,board.LOW)
-board.output(OUT_GUEST,board.LOW)
-board.output(OUT_HOST,board.LOW)
-board.output(OUT_ON,board.HIGH)
+#board.output(OUT_RDY,board.LOW)
+#board.output(OUT_GUEST,board.LOW)
+#board.output(OUT_HOST,board.LOW)
+#board.output(OUT_ON,board.HIGH)
 
 #Configuration Moteur
 PWM_MG_BW=board.PWM(MG_BW,500)
 PWM_MG_FW=board.PWM(MG_FW,500)
 PWM_MD_BW=board.PWM(MD_BW,500)
 PWM_MD_FW=board.PWM(MD_FW,500)
+#PWM_MD_FW.start(50)
 m_now=0
 m_last=0
 #Configuration Laser

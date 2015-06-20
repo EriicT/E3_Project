@@ -8,7 +8,7 @@ if configuration():
 		init_server()
 		set_configuration(v.configuration)
 
-v.board.output(v.OUT_RDY,v.board.HIGH)
+#v.board.output(v.OUT_RDY,v.board.HIGH)
 
 while v.is_linked!=v.is_playable :
 	start_server_daemon()			
@@ -21,9 +21,9 @@ while v.is_linked!=v.is_playable :
 		v.is_playable = start_game()
 	
 	if v.is_playable :
-			break
+		break
 
-
+score_timer()
 while v.is_playable :
 	interlocuteur,commande,parametre=listen_all()
 	if interlocuteur == False :			
@@ -32,4 +32,5 @@ while v.is_playable :
 		process_command_in_game(interlocuteur,commande,parametre)
 		
 print("Fin du game Bitchies! ")
-
+print v.csvf
+v.board.cleanup()

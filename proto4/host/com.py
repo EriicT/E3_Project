@@ -22,6 +22,7 @@ def off(callback):
 
 def android_send(socket,data):
 	socket.send((data).encode("UTF-8"))
+	print data
 
 def raspberry_send(socket,fonction,data):
 	socket.send(get_self_ip()+"&"+fonction+"&"+data)
@@ -71,7 +72,9 @@ def link_new_device(c_addr):
 		try :
 			ID[str(c_addr)]['sock_send'] = v.socket.socket(v.socket.AF_INET,v.socket.SOCK_STREAM)
 			ID[str(c_addr)]['sock_send'].connect((str(c_addr),40450))
-			v.list_send.append(ID[str(c_addr)]['sock_send'])			
+			v.list_send.append(ID[str(c_addr)]['sock_send'])
+			print("connexion a ", c_addr)	
+			print(ID[str(c_addr)]['sock_send'])		
 		except :
 			print("Pas reussi a se connecter en retour")
 
@@ -81,7 +84,7 @@ def listen_all():
 	for sock in ready_con:
 		try :
 			data,addr = sock.recvfrom(1024)
-			if len(data)>1 :
+			if len(data)>1 : 
 				cible=data.split('&')[0]
 				commande=data.split('&')[1]
 				parametre=data.split('&')[-1]	
@@ -118,7 +121,7 @@ def add_dict(c_socket,c_addr):
 		ID[str(c_addr[0])]['sock_listen'] == c_socket	
 
 def configure_server() :
-	v.board.output(v.OUT_GUEST,v.board.HIGH)
+#	v.board.output(v.OUT_GUEST,v.board.HIGH)
 	print("--- Server is being initalized ---")
 	print(" MY IP IS " + str( v.HOST) )
 	v.server.bind((v.HOST,v.PORT))

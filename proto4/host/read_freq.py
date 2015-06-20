@@ -1,6 +1,5 @@
-
 import variables as v
-
+import game as g
 
 def count_left(callback):
 		v.l_now = v.datetime.datetime.now().microsecond
@@ -11,6 +10,10 @@ def count_left(callback):
 		if v.set_laser[v.configuration]['min_period']<v.l_moyenne_echant<v.set_laser[v.configuration]['max_period'] and v.set_laser[v.configuration]['echant']>v.l_echant :
 			v.l_frequence= round(float(1/(v.l_moyenne_echant*10E-7)),0)
 			print("touche gauche " + str(v.l_frequence) + str(v.configuration))
+			g.recept_event("10.5.5.1","touched")
+			v.board.output(v.OUT_T,v.board.HIGH)
+			v.time.sleep(2)
+			v.board.output(v.OUT_T,v.board.LOW)
 			v.l_delta=0
 			v.l_echant=0
 			v.l_duree_echant=0
@@ -30,7 +33,11 @@ def count_right(callback):
 		v.r_moyenne_echant=abs(v.r_duree_echant/v.r_echant)
 		if v.set_laser[v.configuration]['min_period']<v.r_moyenne_echant<v.set_laser[v.configuration]['max_period'] and v.set_laser[v.configuration]['echant'] > v.r_echant:
 			v.r_frequence= round(float(1/(v.r_moyenne_echant*10E-7)),0)
-			print("touche droit " +str(r_frequence))
+			print("touche droit " +str(v.r_frequence))
+			g.recept_event("10.5.5.1","touched")
+			v.board.output(v.OUT_T,v.board.HIGH)
+			v.time.sleep(2)
+			v.board.output(v.OUT_T,v.board.LOW)
 			v.r_delta=0
 			v.r_echant=0
 			v.r_duree_echant=0
