@@ -8,9 +8,9 @@ def init_laser(player):
 	
 def laser(state):
 	try :
-		if state == "ON" :
+		if state.startswith("ON") :
 			v.laser.start(50)
-		elif state == "OFF":
+		elif state.startswith("OFF"):
 			v.laser.start(0)
 		else :
 			pass

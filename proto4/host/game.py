@@ -41,6 +41,7 @@ def associate_devices():
 					ID[second_key]['is_linked'] = True
 					c.send(key,"setmate","associated_device_ip*"+str(second_key))
 					c.send(second_key,"setmate","associated_device_ip*"+str(key))
+					ID[second_key]['name']=ID[key]['name']
 			break		
 		else :
 			print("NON")
@@ -128,10 +129,12 @@ def recept_event(emetteur,data):
 	for key in v.dict_player:
 		if emetteur == v.dict_player[key]['ip'] :
 			player1=v.dict_player[key]['ip']
-			name_player=key
+			name_player1=key
+			print player1, name_player2
 		else :
 			player2=v.dict_player[key]['ip']
 			name_player2=key
+			print player2, name_player2
 	try :
 		new_event(player1,player2,data,v.csvf)
 		c.send(emetteur,"lolol","beTouched&"+name_player2)
