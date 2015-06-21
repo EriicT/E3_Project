@@ -12,8 +12,8 @@ def moteur(commande):
 		v.PWM_MG_BW.start(0)
 		v.PWM_MD_FW.start(0)
 	
-		vitesse_c = round(float((0.5*abs(vitesse_r))+50),2) 
-		coefficient=round(float((90-abs(angle_r))/90),2)
+		vitesse_c = round(float((0.5*abs(vitesse_r))+50),0) 
+		coefficient=round(float((90-abs(angle_r))/90),0)
 		v.m_last=v.datetime.datetime.now().microsecond
 		try :
 			if -90<angle_r<-50 :
@@ -69,6 +69,7 @@ def moteur(commande):
 			v.PWM_MD_BW.start(0)		 
 	except :
 		print("probleme")
+
 def enable_moteur(value) :
 	if value == True :
 		v.board.output(v.MG_EN,v.board.HIGH)
